@@ -6,13 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable implements MustVerifyEmail, HasMedia
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, InteractsWithMedia;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -54,48 +52,27 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     }
 
     /**
-     * Media Library: Avatar Collection definieren
-     */
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('avatar')
-            ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
-    }
-
-    /**
-     * Media Library: Automatische Avatar-Conversions
-     */
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(150)
-            ->height(150)
-            ->sharpen(10)
-            ->nonQueued(); // Sofort verarbeiten
-
-        $this->addMediaConversion('small')
-            ->width(50)
-            ->height(50)
-            ->sharpen(10)
-            ->nonQueued();
-
-        $this->addMediaConversion('large')
-            ->width(300)
-            ->height(300)
-            ->sharpen(10)
-            ->nonQueued();
-    }
-
-    /**
-     * Hilfsmethode: Avatar-URL abrufen
+     * Hilfsmethode: Avatar-URL über UserDetail abrufen
+     *
+     * @param string $conversion Die gewünschte Media Conversion (z.B. 'thumb', 'small', 'large')
+     * @return string Die URL des Avatars oder Fallback-Bild
      */
     public function getAvatarUrl(string $conversion = ''): string
     {
-        if ($this->hasMedia('avatar')) {
-            return $this->getFirstMediaUrl('avatar', $conversion);
+        if ($this->userDetail && $this->userDetail->hasMedia('avatar')) {
+            return $this->userDetail->getFirstMediaUrl('avatar', $conversion);
         }
 
         return asset('images/default-avatar.png'); // Fallback
+    }
+
+    /**
+     * Prüfen ob User einen Avatar hat
+     *
+     * @return bool True wenn der User einen Avatar hat
+     */
+    public function hasAvatar(): bool
+    {
+        return $this->userDetail && $this->userDetail->hasMedia('avatar');
     }
 }

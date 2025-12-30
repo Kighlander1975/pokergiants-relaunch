@@ -1,4 +1,4 @@
-﻿@extends('layouts.frontend.main-layout-container.app')
+@extends('layouts.frontend.main-layout-container.app')
 
 @section('content-title')
 <div class="home container glass-card">
@@ -13,20 +13,12 @@
     <div class="flex items-center justify-start space-x-8">
         {{-- Debug: {{ $user->nickname }} --}}
         <x-avatar
-            :image-url="$user->getAvatarUrl('large')"
+            :image-url="$user->hasAvatar() ? $user->getAvatarUrl('large') : null"
             :firstname="$user->userDetail->firstname ?? null"
             :lastname="$user->userDetail->lastname ?? null"
             :nickname="$user->nickname"
+            :display-mode="$user->userDetail->getAvatarDisplayMode()"
             size="80" />
-
-        @if(Auth::check() && Auth::id() === $user->id)
-            <div class="ml-4">
-                <a href="{{ route('avatar.edit') }}" class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
-                    <x-icon name="camera" type="fas" class="mr-1" />
-                    Avatar bearbeiten
-                </a>
-            </div>
-        @endif
 
         @php
         $countryFlag = $user->userDetail->country_flag ?? 'de_DE';
@@ -66,10 +58,53 @@
         <span class="text-2xl text-green-600">📸</span>
     </div>
     <h3 class="text-xl font-semibold mb-2">Avatar ändern</h3>
-    <p class="text-gray-600 mb-4">Profilbild hochladen</p>
-    <button class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 cursor-not-allowed opacity-50"
-        disabled>
-        Bald verfügbar
+    <p class="text-gray-600 mb-4">Profilbild hochladen und bearbeiten</p>
+    <div class="flex flex-row space-x-2 justify-center">
+        <a href="{{ route('avatar.edit') }}"
+            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 inline-block text-center flex-1">
+            Avatar ändern
+        </a>
+        <button @if(!$user->hasAvatar()) disabled @endif
+            @if($user->hasAvatar()) onclick="deleteAvatar()" @endif
+            class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 inline-block text-center flex-1">
+            Avatar löschen
+        </button>
+    </div>
+</div>
+
+<!-- Avatar Display Mode -->
+<div class="glass-card">
+    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <span class="text-2xl text-yellow-600">🎭</span>
+    </div>
+    <h3 class="text-xl font-semibold mb-2">Avatar-Anzeige</h3>
+    <p class="text-gray-600 mb-4">
+        @if($user->hasAvatar())
+        Wähle wie dein Avatar-Text angezeigt wird (nur verfügbar wenn kein Bild-Avatar gesetzt ist)
+        @else
+        Wähle wie dein Avatar-Text angezeigt wird
+        @endif
+    </p>
+    <div class="flex flex-col space-y-2">
+        <label class="flex items-center {{ $user->hasAvatar() ? 'opacity-50 cursor-not-allowed' : '' }}">
+            <input type="radio" name="avatar_display_mode" value="nickname"
+                {{ ($user->userDetail->getAvatarDisplayMode() ?? 'nickname') === 'nickname' ? 'checked' : '' }}
+                {{ $user->hasAvatar() ? 'disabled' : '' }}
+                class="mr-2">
+            <span>Nickname verwenden ({{ Str::limit($user->nickname, 2, '') }})</span>
+        </label>
+        <label class="flex items-center {{ $user->hasAvatar() ? 'opacity-50 cursor-not-allowed' : '' }}">
+            <input type="radio" name="avatar_display_mode" value="initials"
+                {{ ($user->userDetail->getAvatarDisplayMode() ?? 'nickname') === 'initials' ? 'checked' : '' }}
+                {{ $user->hasAvatar() ? 'disabled' : '' }}
+                class="mr-2">
+            <span>Initialen verwenden ({{ $user->userDetail->firstname && $user->userDetail->lastname ? Str::substr($user->userDetail->firstname, 0, 1) . Str::substr($user->userDetail->lastname, 0, 1) : '??' }})</span>
+        </label>
+    </div>
+    <button onclick="updateAvatarDisplayMode()"
+        {{ $user->hasAvatar() ? 'disabled' : '' }}
+        class="bg-yellow-600 text-white px-6 py-2 rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 mt-4">
+        Avatar-Anzeige aktualisieren
     </button>
 </div>
 
@@ -143,4 +178,108 @@
     </div>
 </div>
 @endif
+
+@push('scripts')
+<script>
+    function deleteAvatar() {
+        if (confirm('Bist du sicher, dass du deinen Avatar löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+            // Loading state
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg class="w-4 h-4 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></svg>Lösche...';
+            button.disabled = true;
+
+            fetch('/avatar', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Erfolg - Seite neu laden um Änderungen zu zeigen
+                        location.reload();
+                    } else {
+                        alert('Fehler beim Löschen: ' + (data.message || 'Unbekannter Fehler'));
+                        // Button zurücksetzen
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    alert('Fehler beim Löschen des Avatars.');
+                    // Button zurücksetzen
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+        }
+    }
+
+    function updateAvatarDisplayMode() {
+        console.log('updateAvatarDisplayMode called');
+        const selectedMode = document.querySelector('input[name="avatar_display_mode"]:checked');
+        console.log('selectedMode:', selectedMode);
+        if (!selectedMode) {
+            alert('Bitte wähle eine Option aus.');
+            return;
+        }
+
+        // Prüfen ob ein Bild-Avatar vorhanden ist
+        const hasAvatar = {
+            {
+                $user - > hasAvatar() ? 'true' : 'false'
+            }
+        };
+        if (hasAvatar) {
+            alert('Diese Funktion ist nicht verfügbar, wenn ein Bild-Avatar gesetzt ist.');
+            return;
+        }
+
+        const mode = selectedMode.value;
+        console.log('mode:', mode);
+
+        // Loading state für den Button
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<svg class="w-4 h-4 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></svg>Aktualisiere...';
+        button.disabled = true;
+
+        fetch('/avatar/display-mode', {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    display_mode: mode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Erfolg - Seite neu laden um Änderungen zu zeigen
+                    location.reload();
+                } else {
+                    alert('Fehler beim Aktualisieren: ' + (data.message || 'Unbekannter Fehler'));
+                    // Button zurücksetzen
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Update error:', error);
+                alert('Fehler beim Aktualisieren des Avatar-Display-Modus.');
+                // Button zurücksetzen
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+    }
+</script>
+@endpush
+
 @endsection

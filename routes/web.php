@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\ProfileCompletionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Support\AvatarTempCleanup;
 
 Route::get('/', function () {
     return view('layouts.frontend.pages.home');
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/avatar/edit', [App\Http\Controllers\AvatarController::class, 'edit'])->name('avatar.edit');
     Route::post('/avatar/upload', [App\Http\Controllers\AvatarController::class, 'upload'])->name('avatar.upload');
     Route::post('/avatar/crop', [App\Http\Controllers\AvatarController::class, 'crop'])->name('avatar.crop');
+    Route::patch('/avatar/display-mode', [App\Http\Controllers\AvatarController::class, 'updateDisplayMode'])->name('avatar.updateDisplayMode');
     Route::delete('/avatar', [App\Http\Controllers\AvatarController::class, 'destroy'])->name('avatar.destroy');
 });
 
@@ -60,6 +62,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/dev/cleanup-temp-avatars', function () {
+    $result = AvatarTempCleanup::cleanup(0); // 0 Tage = ALLE temp_* löschen
+
+    dd($result);
 });
 
 require __DIR__ . '/auth.php';

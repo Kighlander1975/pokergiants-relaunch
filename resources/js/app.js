@@ -5,6 +5,10 @@ import "../css/pages/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import "cropperjs/dist/cropper.css";
+import Cropper from "cropperjs";
+
+window.Cropper = Cropper;
 
 import Alpine from "alpinejs";
 

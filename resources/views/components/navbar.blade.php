@@ -49,10 +49,11 @@
                     <li class="nav-item min-h-[68px]">
                         <a class="nav-link d-flex align-items-center px-2 sm:py-2" href="{{ route('profile.show') }}">
                             <x-avatar
-                                :image-url="auth()->user()->getAvatarUrl('small')"
+                                :image-url="auth()->user()->hasAvatar() ? auth()->user()->getAvatarUrl('small') : null"
                                 :firstname="auth()->user()->userDetail->firstname ?? null"
                                 :lastname="auth()->user()->userDetail->lastname ?? null"
                                 :nickname="auth()->user()->nickname"
+                                :display-mode="auth()->user()->userDetail->getAvatarDisplayMode()"
                                 size="48" />
                             <div class="ms-1">
                                 @php

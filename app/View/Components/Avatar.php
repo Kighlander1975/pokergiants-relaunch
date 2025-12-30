@@ -13,7 +13,7 @@ class Avatar extends Component
     public ?string $imageFilename;
     public ?string $imageUrl;
     public int $size;
-    public string $sizeClass;
+    public string $sizeClass = '';
 
     /**
      * Create a new component instance.
@@ -24,6 +24,7 @@ class Avatar extends Component
         ?string $firstname = null,
         ?string $lastname = null,
         ?string $nickname = null,
+        ?string $displayMode = null,
         int $size = 64
     ) {
         $this->imageFilename = $imageFilename;
@@ -33,10 +34,9 @@ class Avatar extends Component
 
         // Generate initials with clear priority:
         // 1. Avatar image exists: No initials needed (handled in view)
-        // 2. Firstname + Lastname available: Use first letters of both
-        // 3. Nickname available (required field): Use first 2 characters
-        // 4. Fallback: Use '??'
-        $this->initials = $this->generateInitials($firstname, $lastname, $nickname);
+        // 2. Display mode determines what to use for initials
+        // 3. Fallback: Use '??'
+        $this->initials = $this->generateInitials($firstname, $lastname, $nickname, $displayMode);
 
         // Generate background color based on hash of initials
         $this->backgroundColor = $this->generateColor($this->initials);
@@ -45,8 +45,18 @@ class Avatar extends Component
     /**
      * Generate initials with clear priority hierarchy.
      */
-    private function generateInitials(?string $firstname, ?string $lastname, ?string $nickname): string
+    private function generateInitials(?string $firstname, ?string $lastname, ?string $nickname, ?string $displayMode): string
     {
+        // If display mode is specified, use it to determine what to show
+        if ($displayMode === 'initials' && !empty($firstname) && !empty($lastname)) {
+            return strtoupper(substr($firstname, 0, 1) . substr($lastname, 0, 1));
+        }
+
+        if ($displayMode === 'nickname' && !empty($nickname)) {
+            return strtoupper(substr($nickname, 0, 2));
+        }
+
+        // Default behavior (backward compatibility)
         // Priority 1: Firstname + Lastname available → First letters of both names
         if (!empty($firstname) && !empty($lastname)) {
             return strtoupper(substr($firstname, 0, 1) . substr($lastname, 0, 1));

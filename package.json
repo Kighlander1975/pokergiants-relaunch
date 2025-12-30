@@ -21,7 +21,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.4",
         "bootstrap": "^5.3.8",
-        "cropperjs": "^2.1.0",
+        "cropperjs": "^1.6.1",
         "flag-icons": "^7.5.0"
     }
 }

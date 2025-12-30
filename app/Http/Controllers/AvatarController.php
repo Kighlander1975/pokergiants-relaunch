@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
 
 class AvatarController extends Controller
 {
@@ -28,6 +29,12 @@ class AvatarController extends Controller
         ]);
 
         $user = Auth::user();
+        $userDetail = $user->userDetail;
+
+        if (!$userDetail) {
+            return response()->json(['success' => false, 'message' => 'UserDetail nicht gefunden']);
+        }
+
         $file = $request->file('avatar');
 
         // Temporären Dateinamen generieren
@@ -48,91 +55,79 @@ class AvatarController extends Controller
      */
     public function crop(Request $request): JsonResponse
     {
+        Log::info('Avatar crop request', $request->all());
+
         $request->validate([
+            'avatar'    => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
             'temp_path' => 'required|string',
-            'x' => 'required|numeric',
-            'y' => 'required|numeric',
-            'width' => 'required|numeric|min:50|max:500',
-            'height' => 'required|numeric|min:50|max:500',
-            'rotate' => 'nullable|numeric|min:-180|max:180',
-            'scaleX' => 'nullable|numeric|min:-1|max:1',
-            'scaleY' => 'nullable|numeric|min:-1|max:1',
         ]);
 
         $user = Auth::user();
-        $tempPath = $request->temp_path;
+        $userDetail = $user->userDetail;
 
-        // Prüfe ob temp-Datei existiert und dem User gehört
-        if (!Storage::disk('public')->exists($tempPath)) {
-            return response()->json(['success' => false, 'message' => 'Bild nicht gefunden']);
+        if (!$userDetail) {
+            Log::error('UserDetail not found for user', ['user_id' => $user->id]);
+            return response()->json(['success' => false, 'message' => 'UserDetail nicht gefunden']);
         }
 
-        // Prüfe ob der Dateiname dem User gehört (Sicherheit)
+        $tempPath = $request->temp_path;
+        Log::info('Temp path', ['temp_path' => $tempPath]);
+
+        // Sicherheitscheck: gehört diese temp-Datei dem Nutzer?
         $filename = basename($tempPath);
         if (!str_starts_with($filename, 'temp_' . $user->id . '_')) {
+            Log::error('Unauthorized access to temp file', ['filename' => $filename, 'user_id' => $user->id]);
             return response()->json(['success' => false, 'message' => 'Nicht autorisiert']);
         }
 
         try {
-            $fullTempPath = Storage::disk('public')->path($tempPath);
+            // fertiges Canvas-Bild (Blob) aus Request holen
+            $file = $request->file('avatar');
 
-            // Intervention Image für Cropping verwenden
-            $image = Image::make($fullTempPath);
+            $manager = new ImageManager('Intervention\Image\Drivers\Gd\Driver');
+            $image = $manager->read($file->getPathname());
+            Log::info('Canvas image loaded', ['width' => $image->width(), 'height' => $image->height()]);
 
-            // EXIF-Rotation automatisch korrigieren
-            $image->orientate();
+            // auf 300x300 normalisieren (falls der Canvas doch anders groß ist)
+            $image->resize(300, 300);
+            Log::info('Resize applied');
 
-            // Rotation anwenden
-            if ($request->rotate && $request->rotate != 0) {
-                $image->rotate(-$request->rotate); // Negativ weil Cropper.js gegen Uhrzeigersinn rotiert
-            }
+            // als JPEG encoden und in Media Library speichern
+            $encodedImage = $image->encode(new \Intervention\Image\Encoders\JpegEncoder(90));
+            $mediaFile    = $encodedImage->toString();
+            $finalFilename = 'avatar_' . $user->id . '_' . time() . '.jpg';
+            Log::info('Media file prepared', ['filename' => $finalFilename]);
 
-            // Flip anwenden
-            if ($request->scaleX && $request->scaleX == -1) {
-                $image->flip('h');
-            }
-            if ($request->scaleY && $request->scaleY == -1) {
-                $image->flip('v');
-            }
+            // alte Avatare löschen
+            $userDetail->clearMediaCollection('avatar');
+            Log::info('Old avatars cleared');
 
-            // Crop anwenden (als Quadrat für Avatar)
-            $cropSize = min($request->width, $request->height);
-            $image->crop(
-                $cropSize,
-                $cropSize,
-                $request->x,
-                $request->y
-            );
-
-            // Größe auf 300x300 für beste Qualität setzen
-            $image->resize(300, 300, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-
-            // Als Media in Laravel Media Library speichern
-            $mediaFile = $image->encode('jpg', 90);
-            $filename = 'avatar_' . $user->id . '_' . time() . '.jpg';
-
-            // Alte Avatare löschen
-            $user->clearMediaCollection('avatar');
-
-            // Neuen Avatar hinzufügen
-            $user->addMediaFromString($mediaFile)
+            // neuen Avatar speichern
+            $media = $userDetail->addMediaFromString($mediaFile)
                 ->setName('Avatar')
-                ->setFileName($filename)
+                ->setFileName($finalFilename)
                 ->toMediaCollection('avatar');
 
-            // Temp-Datei löschen
+            Log::info('New avatar saved', ['media_id' => $media->id]);
+
+            // temp-Datei aufräumen (optional, aber sinnvoll)
             Storage::disk('public')->delete($tempPath);
+            Log::info('Temp file deleted');
+            /** @var \App\Models\User $user */
+            $avatarUrl = $user && method_exists($user, 'getAvatarUrl') ? $user->getAvatarUrl('thumb') : asset('images/default-avatar.png');
+            Log::info('Avatar URL', ['avatar_url' => $avatarUrl]);
 
             return response()->json([
-                'success' => true,
-                'message' => 'Avatar erfolgreich aktualisiert',
-                'avatar_url' => $user->getAvatarUrl('thumb')
+                'success'    => true,
+                'message'    => 'Avatar erfolgreich aktualisiert',
+                'avatar_url' => $avatarUrl,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error processing avatar', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
-        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Fehler beim Verarbeiten des Bildes: ' . $e->getMessage()
@@ -140,18 +135,50 @@ class AvatarController extends Controller
         }
     }
 
+
     /**
      * Avatar löschen
      */
     public function destroy(): JsonResponse
     {
         $user = Auth::user();
-        $user->clearMediaCollection('avatar');
+        $userDetail = $user->userDetail;
 
+        if (!$userDetail) {
+            return response()->json(['success' => false, 'message' => 'UserDetail nicht gefunden']);
+        }
+
+        $userDetail->clearMediaCollection('avatar');
+        /** @var \App\Models\User $user */
         return response()->json([
             'success' => true,
             'message' => 'Avatar entfernt',
-            'avatar_url' => $user->getAvatarUrl()
+            'avatar_url' => $user && method_exists($user, 'getAvatarUrl') ? $user->getAvatarUrl() : asset('images/default-avatar.png')
+        ]);
+    }
+
+    /**
+     * Avatar-Display-Modus aktualisieren
+     */
+    public function updateDisplayMode(Request $request): JsonResponse
+    {
+        $request->validate([
+            'display_mode' => 'required|in:nickname,initials',
+        ]);
+
+        $user = Auth::user();
+        $userDetail = $user->userDetail;
+
+        if (!$userDetail) {
+            return response()->json(['success' => false, 'message' => 'UserDetail nicht gefunden']);
+        }
+
+        $userDetail->update(['avatar_display_mode' => $request->display_mode]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Avatar-Display-Modus aktualisiert',
+            'display_mode' => $request->display_mode
         ]);
     }
 }
