@@ -50,12 +50,26 @@ class ProfileController extends Controller
         // Update user_details table fields
         if ($user->userDetail) {
             $user->userDetail->update($request->only([
-                'firstname', 'lastname', 'street_number', 'zip', 'city', 'country', 'dob', 'bio'
+                'firstname',
+                'lastname',
+                'street_number',
+                'zip',
+                'city',
+                'country',
+                'dob',
+                'bio'
             ]));
         } else {
             // Create userDetail if it doesn't exist
             $user->userDetail()->create($request->only([
-                'firstname', 'lastname', 'street_number', 'zip', 'city', 'country', 'dob', 'bio'
+                'firstname',
+                'lastname',
+                'street_number',
+                'zip',
+                'city',
+                'country',
+                'dob',
+                'bio'
             ]));
         }
 
