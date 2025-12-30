@@ -27,9 +27,9 @@ class Avatar extends Component
         $this->size = $size;
 
         // Generate initials
-        if ($firstname && $lastname) {
+        if (!empty($firstname) && !empty($lastname)) {
             $this->initials = strtoupper(substr($firstname, 0, 1) . substr($lastname, 0, 1));
-        } elseif ($nickname) {
+        } elseif (!empty($nickname)) {
             $this->initials = strtoupper(substr($nickname, 0, 2));
         } else {
             $this->initials = '??';
