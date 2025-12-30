@@ -8,7 +8,8 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
+<div class="glass-card one-card one-card-33">
+    <h2 class="text-center">Verifizierungsfehler</h2>
     <p>Die Verifizierung deiner E-Mail-Adresse ist fehlgeschlagen.</p>
     <p><strong>Fehlerdetails (für Entwickler):</strong> {{ $error }}</p>
     <p>Bitte versuche es erneut oder kontaktiere den Support.</p>

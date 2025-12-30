@@ -8,9 +8,10 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
+<div class="glass-card one-card one-card-33">
+    <h2 class="text-center">Fast geschafft!</h2>
     <p>Deine Registrierung war erfolgreich! Wir haben dir eine E-Mail mit einem Verifizierungslink geschickt.</p>
     <p>Bitte klicke auf den Link in der E-Mail, um dein Konto zu aktivieren.</p>
-    <p>Falls du die E-Mail nicht erhalten hast, kannst du dich <a href="{{ route('login') }}">einloggen</a> und eine neue Verifizierungs-E-Mail anfordern.</p>
+    <p>Falls du die E-Mail nicht erhalten hast, kannst du hier <a href="{{ route('verification.send') }}">LINK</a> eine neue Verifizierungs-E-Mail anfordern.</p>
 </div>
 @endsection

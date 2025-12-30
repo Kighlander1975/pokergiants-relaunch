@@ -20,6 +20,7 @@ class UserDetail extends Model
         'avatar_image_filename',
         'bio',
         'dob',
+        'giants_card',
     ];
 
     protected $casts = [

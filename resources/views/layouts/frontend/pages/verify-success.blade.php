@@ -8,7 +8,8 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
+<div class="glass-card one-card one-card-33">
+    <h2 class="text-center">E-Mail Verifiziert</h2>
     <p>Deine E-Mail-Adresse wurde erfolgreich verifiziert. Du kannst dich jetzt <a href="{{ route('login') }}">einloggen</a>.</p>
     <p>Weiterleitung zur Login-Seite in <span id="countdown">15</span> Sekunden...</p>
 </div>
