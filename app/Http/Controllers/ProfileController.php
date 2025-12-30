@@ -27,7 +27,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $request->user()->load('userDetail'),
         ]);
     }
 
@@ -36,15 +36,10 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        $user = $request->user()->load('userDetail');
 
-        // Update user table fields
-        $user->fill($request->only(['name', 'email']));
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
+        // Update user table fields (only nickname, since email is handled elsewhere)
+        $user->fill($request->only(['nickname']));
         $user->save();
 
         // Update user_details table fields
@@ -56,6 +51,7 @@ class ProfileController extends Controller
                 'zip',
                 'city',
                 'country',
+                'country_flag',
                 'dob',
                 'bio'
             ]));
@@ -68,9 +64,17 @@ class ProfileController extends Controller
                 'zip',
                 'city',
                 'country',
+                'country_flag',
                 'dob',
                 'bio'
             ]));
+        }
+
+        // Check if this was a profile completion
+        if (session('completion_required')) {
+            // Clear the cache so it gets rechecked
+            session()->forget('user_details_complete_' . $user->id);
+            return Redirect::route('dashboard')->with('success', 'Profil erfolgreich vervollständigt!');
         }
 
         return Redirect::route('profile.show')->with('status', 'profile-updated');

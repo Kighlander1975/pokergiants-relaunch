@@ -11,15 +11,15 @@
 <!-- User Info Card -->
 <div class="glass-card one-card one-card-100">
     <div class="flex items-center space-x-4">
+        {{-- Debug: {{ $user->nickname }} --}}
         <x-avatar
             :image-filename="$user->userDetail->avatar_image_filename ?? null"
             :firstname="$user->userDetail->firstname ?? null"
             :lastname="$user->userDetail->lastname ?? null"
-            :nickname="$user->name"
-            size="80"
-        />
+            :nickname="$user->nickname"
+            size="80" />
         <div>
-            <h2 class="text-2xl font-bold">{{ $user->name }}</h2>
+            <h2 class="text-2xl font-bold">{{ $user->nickname }}</h2>
             <p class="text-gray-600">{{ $user->email }}</p>
             <p class="text-sm text-gray-500">Rolle: {{ $user->userDetail->role ?? 'player' }}</p>
         </div>

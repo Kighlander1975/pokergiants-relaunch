@@ -17,13 +17,8 @@ Route::get('/registration-success', function () {
 })->name('registration.success');
 
 Route::get('/dashboard', function () {
-    /** @var \App\Models\User|null $user */
-    $user = Auth::user();
-    if (!$user || !in_array($user->userDetail->role ?? 'player', ['admin', 'floorman'])) {
-        abort(403, 'Unauthorized');
-    }
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'check.role:admin,floorman'])->name('dashboard');
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])
     ->middleware('auth')
@@ -45,10 +40,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Profile completion routes (excluded from user details check)
-    Route::get('/profile/complete', [ProfileCompletionController::class, 'show'])->name('profile.complete');
-    Route::patch('/profile/complete', [ProfileCompletionController::class, 'update'])->name('profile.complete.update');
 });
 
 require __DIR__ . '/auth.php';

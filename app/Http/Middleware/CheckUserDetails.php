@@ -30,9 +30,9 @@ class CheckUserDetails
 
         // Check if user details are complete (cached in session)
         if (!$this->areUserDetailsComplete($user)) {
-            // Redirect to profile completion page if not on allowed pages
+            // Redirect to profile edit page if not on allowed pages
             if (!$this->isAllowedPage($request)) {
-                return redirect()->route('profile.complete');
+                return redirect()->route('profile.edit')->with('completion_required', true);
             }
         }
 
@@ -86,6 +86,11 @@ class CheckUserDetails
 
         // Allow profile related pages
         if ($currentRoute && str_starts_with($currentRoute->getName(), 'profile.')) {
+            return true;
+        }
+
+        // Allow dashboard (will be handled by CheckRole middleware)
+        if ($currentRoute && $currentRoute->getName() === 'dashboard') {
             return true;
         }
 

@@ -8,7 +8,7 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
+<div class="glass-card one-card one-card-33">
     <p>Du hast nicht die erforderlichen Berechtigungen, um auf diese Seite zuzugreifen.</p>
     <p><a href="{{ route('home') }}">Zurück zur Startseite</a></p>
 </div>

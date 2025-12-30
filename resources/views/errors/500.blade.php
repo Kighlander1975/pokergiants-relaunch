@@ -8,7 +8,7 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
+<div class="glass-card one-card one-card-75">
     <p>Es ist ein unerwarteter Fehler aufgetreten. Bitte versuche es später erneut.</p>
     @if(config('app.debug'))
     <p><strong>Fehlermeldung (DEV Modus):</strong> {{ $exception->getMessage() }}</p>

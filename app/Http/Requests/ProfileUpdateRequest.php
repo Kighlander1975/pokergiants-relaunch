@@ -16,15 +16,16 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
-            ],
+            'nickname' => ['required', 'string', 'max:255'],
+            'firstname' => ['required_if:completion_required,true', 'string', 'max:255'],
+            'lastname' => ['required_if:completion_required,true', 'string', 'max:255'],
+            'street_number' => ['required_if:completion_required,true', 'string', 'max:255'],
+            'zip' => ['required_if:completion_required,true', 'string', 'max:10'],
+            'city' => ['required_if:completion_required,true', 'string', 'max:255'],
+            'country' => ['string', 'in:DE,AT,CH,Other'],
+            'country_flag' => ['string', 'max:5', 'regex:/^[a-z]{2}_[A-Z]{2}$/'],
+            'dob' => ['required_if:completion_required,true', 'date', 'before:today'],
+            'bio' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

@@ -8,7 +8,7 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
+<div class="glass-card one-card one-card-33">
     <p>Die von dir gesuchte Seite konnte nicht gefunden werden.</p>
     <p><a href="{{ route('home') }}">Zurück zur Startseite</a></p>
 </div>

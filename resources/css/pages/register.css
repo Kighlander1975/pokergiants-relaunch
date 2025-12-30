@@ -10,7 +10,10 @@
     color: white !important;
 }
 .glass-card .my-auth-forms input[type="email"],
-.glass-card .my-auth-forms input[type="text"] {
+.glass-card .my-auth-forms input[type="text"],
+.glass-card .my-auth-forms input[type="date"],
+.glass-card .my-auth-forms select,
+.glass-card .my-auth-forms textarea {
     font-family: "Courier New", Courier, monospace;
 }
 

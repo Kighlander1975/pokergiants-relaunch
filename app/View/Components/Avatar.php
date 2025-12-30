@@ -12,6 +12,7 @@ class Avatar extends Component
     public string $backgroundColor;
     public ?string $imageFilename;
     public int $size;
+    public string $sizeClass;
 
     /**
      * Create a new component instance.
@@ -25,18 +26,36 @@ class Avatar extends Component
     ) {
         $this->imageFilename = $imageFilename;
         $this->size = $size;
+        $this->sizeClass = "avatar-size-{$size}";
 
-        // Generate initials
+        // Generate initials with clear priority:
+        // 1. Avatar image exists: No initials needed (handled in view)
+        // 2. Firstname + Lastname available: Use first letters of both
+        // 3. Nickname available (required field): Use first 2 characters
+        // 4. Fallback: Use '??'
+        $this->initials = $this->generateInitials($firstname, $lastname, $nickname);
+
+        // Generate background color based on hash of initials
+        $this->backgroundColor = $this->generateColor($this->initials);
+    }
+
+    /**
+     * Generate initials with clear priority hierarchy.
+     */
+    private function generateInitials(?string $firstname, ?string $lastname, ?string $nickname): string
+    {
+        // Priority 1: Firstname + Lastname available → First letters of both names
         if (!empty($firstname) && !empty($lastname)) {
-            $this->initials = strtoupper(substr($firstname, 0, 1) . substr($lastname, 0, 1));
-        } elseif (!empty($nickname)) {
-            $this->initials = strtoupper(substr($nickname, 0, 2));
-        } else {
-            $this->initials = '??';
+            return strtoupper(substr($firstname, 0, 1) . substr($lastname, 0, 1));
         }
 
-        // Generate background color based on hash of initials + user identifier
-        $this->backgroundColor = $this->generateColor($this->initials);
+        // Priority 2: Nickname available (required field) → First 2 characters
+        if (!empty($nickname)) {
+            return strtoupper(substr($nickname, 0, 2));
+        }
+
+        // Priority 3: Fallback for edge cases
+        return '??';
     }
 
     /**

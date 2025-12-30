@@ -30,7 +30,19 @@
                             Über uns
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center sm:py-2" href="/contact">
+                            <span class="mso me-2">chat</span>
+                            Kontakt
+                        </a>
+                    </li>
                     @auth
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('profile.show') }}">
+                            <span class="mso me-2">person</span>
+                            Profil
+                        </a>
+                    </li>
                     @if(in_array(auth()->user()->userDetail->role ?? 'player', ['admin', 'floorman']))
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('dashboard') }}">
@@ -39,19 +51,26 @@
                         </a>
                     </li>
                     @endif
+                    @auth
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('profile.show') }}">
-                            <span class="mso me-2">person</span>
-                            Profil
-                        </a>
+                        <x-avatar
+                            :image-filename="auth()->user()->userDetail->avatar_image_filename ?? null"
+                            :firstname="auth()->user()->userDetail->firstname ?? null"
+                            :lastname="auth()->user()->userDetail->lastname ?? null"
+                            :nickname="auth()->user()->nickname"
+                            size="48" />
                     </li>
                     @endauth
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="/contact">
-                            <span class="mso me-2">chat</span>
-                            Kontakt
-                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="nav-link d-flex align-items-center sm:py-2">
+                                <span class="mso me-2">logout</span>
+                                Logout
+                            </button>
+                        </form>
                     </li>
+                    @endauth
                     @guest
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('verification.send') }}">
@@ -70,18 +89,8 @@
                             <span class="mso me-2">app_registration</span>
                             Registrieren
                         </a>
-                        @endguest
-                        @auth
-                    <li class="nav-item">
-                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="nav-link d-flex align-items-center sm:py-2">
-                                <span class="mso me-2">logout</span>
-                                Logout
-                            </button>
-                        </form>
                     </li>
-                    @endauth
+                    @endguest
                     <!-- Füge weitere Links hinzu -->
                 </ul>
             </div>
