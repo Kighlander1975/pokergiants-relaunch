@@ -10,17 +10,11 @@
                     Die Zukunft des Sachpreis-Pokers.<br>Fair, sicher und unterhaltsam.
                 </p>
                 <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                        <x-icon name="facebook-f" type="fab" class="text-xl" />
+                    <a href="https://www.facebook.com/PokerGiants" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">
+                        <x-icon name="facebook-f" type="fab" class="text-2xl" />
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                        <x-icon name="twitter" type="fab" class="text-xl" />
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                        <x-icon name="instagram" type="fab" class="text-xl" />
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                        <x-icon name="linkedin-in" type="fab" class="text-xl" />
+                    <a href="https://www.instagram.com/pokergiants/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">
+                        <x-icon name="instagram" type="fab" class="text-2xl" />
                     </a>
                 </div>
             </div>
@@ -30,7 +24,7 @@
                 <h4 class="text-lg font-semibold mb-4">Rechtliches</h4>
                 <ul class="space-y-2">
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">AGB</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Datenschutz</a></li>
+                    <li><a href="{{ route('datenschutz') }}" class="text-gray-400 hover:text-white transition-colors">Datenschutz</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Impressum</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie-Richtlinie</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Verantwortungsvolles Spielen</a></li>

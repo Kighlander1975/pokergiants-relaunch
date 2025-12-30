@@ -46,10 +46,10 @@
                     </li>
                     @endif
                     @auth
-                    <li class="nav-item min-h-[48px]">
+                    <li class="nav-item min-h-[68px]">
                         <a class="nav-link d-flex align-items-center px-2 sm:py-2" href="{{ route('profile.show') }}">
                             <x-avatar
-                                :image-filename="auth()->user()->userDetail->avatar_image_filename ?? null"
+                                :image-url="auth()->user()->getAvatarUrl('small')"
                                 :firstname="auth()->user()->userDetail->firstname ?? null"
                                 :lastname="auth()->user()->userDetail->lastname ?? null"
                                 :nickname="auth()->user()->nickname"
@@ -79,19 +79,19 @@
                     @endauth
                     @guest
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[48px]" href="{{ route('verification.send') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="{{ route('verification.send') }}">
                             <span class="mso me-2">mail</span>
                             E-Mail verifizieren
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[48px]" href="{{ route('login') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="{{ route('login') }}">
                             <span class="mso me-2">login</span>
                             Login
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[48px]" href="{{ route('register') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="{{ route('register') }}">
                             <span class="mso me-2">app_registration</span>
                             Registrieren
                         </a>

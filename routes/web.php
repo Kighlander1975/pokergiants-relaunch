@@ -16,9 +16,21 @@ Route::get('/about', function () {
     return view('layouts.frontend.pages.about');
 })->name('about')->withoutMiddleware(['check.user.details']);
 
+Route::get('/datenschutz', function () {
+    return view('layouts.frontend.pages.datenschutz');
+})->name('datenschutz')->withoutMiddleware(['check.user.details']);
+
 Route::get('/registration-success', function () {
     return view('layouts.frontend.pages.registration-success');
 })->name('registration.success');
+
+// Avatar Routes (nur für eingeloggte User)
+Route::middleware('auth')->group(function () {
+    Route::get('/avatar/edit', [App\Http\Controllers\AvatarController::class, 'edit'])->name('avatar.edit');
+    Route::post('/avatar/upload', [App\Http\Controllers\AvatarController::class, 'upload'])->name('avatar.upload');
+    Route::post('/avatar/crop', [App\Http\Controllers\AvatarController::class, 'crop'])->name('avatar.crop');
+    Route::delete('/avatar', [App\Http\Controllers\AvatarController::class, 'destroy'])->name('avatar.destroy');
+});
 
 Route::fallback(function () {
     return view('errors.404');

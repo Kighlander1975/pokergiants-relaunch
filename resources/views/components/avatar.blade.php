@@ -1,6 +1,6 @@
-@if($imageFilename)
+@if($imageUrl || $imageFilename)
 <!-- Image Avatar -->
-<img src="{{ asset('storage/avatars/' . $imageFilename) }}"
+<img src="{{ $imageUrl ?: asset('storage/avatars/' . $imageFilename) }}"
     alt="Avatar"
     class="avatar-image {{ $sizeClass }}">
 @else

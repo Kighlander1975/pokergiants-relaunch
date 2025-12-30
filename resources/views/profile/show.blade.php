@@ -13,11 +13,20 @@
     <div class="flex items-center justify-start space-x-8">
         {{-- Debug: {{ $user->nickname }} --}}
         <x-avatar
-            :image-filename="$user->userDetail->avatar_image_filename ?? null"
+            :image-url="$user->getAvatarUrl('large')"
             :firstname="$user->userDetail->firstname ?? null"
             :lastname="$user->userDetail->lastname ?? null"
             :nickname="$user->nickname"
             size="80" />
+
+        @if(Auth::check() && Auth::id() === $user->id)
+            <div class="ml-4">
+                <a href="{{ route('avatar.edit') }}" class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
+                    <x-icon name="camera" type="fas" class="mr-1" />
+                    Avatar bearbeiten
+                </a>
+            </div>
+        @endif
 
         @php
         $countryFlag = $user->userDetail->country_flag ?? 'de_DE';

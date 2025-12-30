@@ -11,6 +11,7 @@ class Avatar extends Component
     public string $initials;
     public string $backgroundColor;
     public ?string $imageFilename;
+    public ?string $imageUrl;
     public int $size;
     public string $sizeClass;
 
@@ -19,12 +20,14 @@ class Avatar extends Component
      */
     public function __construct(
         ?string $imageFilename = null,
+        ?string $imageUrl = null,
         ?string $firstname = null,
         ?string $lastname = null,
         ?string $nickname = null,
         int $size = 64
     ) {
         $this->imageFilename = $imageFilename;
+        $this->imageUrl = $imageUrl;
         $this->size = $size;
         $this->sizeClass = "avatar-size-{$size}";
 
