@@ -12,6 +12,16 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
+     * Display the user's profile overview.
+     */
+    public function show(Request $request): View
+    {
+        return view('profile.show', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
@@ -26,15 +36,30 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Update user table fields
+        $user->fill($request->only(['name', 'email']));
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Update user_details table fields
+        if ($user->userDetail) {
+            $user->userDetail->update($request->only([
+                'firstname', 'lastname', 'street_number', 'zip', 'city', 'country', 'dob', 'bio'
+            ]));
+        } else {
+            // Create userDetail if it doesn't exist
+            $user->userDetail()->create($request->only([
+                'firstname', 'lastname', 'street_number', 'zip', 'city', 'country', 'dob', 'bio'
+            ]));
+        }
+
+        return Redirect::route('profile.show')->with('status', 'profile-updated');
     }
 
     /**

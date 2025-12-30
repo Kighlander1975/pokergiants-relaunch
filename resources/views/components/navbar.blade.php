@@ -39,6 +39,12 @@
                         </a>
                     </li>
                     @endif
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('profile.show') }}">
+                            <span class="mso me-2">person</span>
+                            Profil
+                        </a>
+                    </li>
                     @endauth
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center sm:py-2" href="/contact">
