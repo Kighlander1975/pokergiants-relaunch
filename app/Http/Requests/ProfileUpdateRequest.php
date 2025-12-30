@@ -23,7 +23,7 @@ class ProfileUpdateRequest extends FormRequest
             'zip' => ['required_if:completion_required,true', 'string', 'max:10'],
             'city' => ['required_if:completion_required,true', 'string', 'max:255'],
             'country' => ['string', 'in:DE,AT,CH,Other'],
-            'country_flag' => ['string', 'max:5', 'regex:/^[a-z]{2}_[A-Z]{2}$/'],
+            'country_flag' => ['string', 'max:7', 'regex:/^[a-z]{2}_[A-Z]{2,3}$/'],
             'dob' => ['required_if:completion_required,true', 'date', 'before:today'],
             'bio' => ['nullable', 'string', 'max:1000'],
         ];

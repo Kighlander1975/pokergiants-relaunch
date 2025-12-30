@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('zip', 10)->nullable();
             $table->string('city', 200)->nullable();
             $table->enum('country', ['DE', 'AT', 'CH', 'Other'])->default('DE');
-            $table->string('country_flag', 5)->default('de_DE');
+            $table->string('country_flag', 7)->default('de_DE');
             $table->string('avatar_image_filename', 200)->nullable();
             $table->text('bio')->nullable();
             $table->date('dob')->nullable();

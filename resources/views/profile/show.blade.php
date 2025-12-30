@@ -1,4 +1,4 @@
-@extends('layouts.frontend.main-layout-container.app')
+﻿@extends('layouts.frontend.main-layout-container.app')
 
 @section('content-title')
 <div class="home container glass-card">
@@ -10,7 +10,7 @@
 
 <!-- User Info Card -->
 <div class="glass-card one-card one-card-100">
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center justify-start space-x-8">
         {{-- Debug: {{ $user->nickname }} --}}
         <x-avatar
             :image-filename="$user->userDetail->avatar_image_filename ?? null"
@@ -18,6 +18,16 @@
             :lastname="$user->userDetail->lastname ?? null"
             :nickname="$user->nickname"
             size="80" />
+
+        @php
+        $countryFlag = $user->userDetail->country_flag ?? 'de_DE';
+        $parts = explode('_', $countryFlag);
+        $countryCode = strtolower($parts[0]);
+        $regionCode = isset($parts[1]) ? '-' . strtolower($parts[1]) : '';
+        $flagCode = $countryCode . $regionCode;
+        @endphp
+        <span class="fi fi-{{ $flagCode }} text-6xl"></span>
+
         <div>
             <h2 class="text-2xl font-bold">{{ $user->nickname }}</h2>
             <p class="text-gray-600">{{ $user->email }}</p>

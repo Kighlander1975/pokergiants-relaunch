@@ -52,13 +52,25 @@
                     </li>
                     @endif
                     @auth
-                    <li class="nav-item">
+                    <li class="nav-item" style="margin-right: 4px;">
                         <x-avatar
                             :image-filename="auth()->user()->userDetail->avatar_image_filename ?? null"
                             :firstname="auth()->user()->userDetail->firstname ?? null"
                             :lastname="auth()->user()->userDetail->lastname ?? null"
                             :nickname="auth()->user()->nickname"
                             size="48" />
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center px-1 py-2">
+                            @php
+                            $countryFlag = auth()->user()->userDetail->country_flag ?? 'de_DE';
+                            $parts = explode('_', $countryFlag);
+                            $countryCode = strtolower($parts[0]);
+                            $regionCode = isset($parts[1]) ? '-' . strtolower($parts[1]) : '';
+                            $flagCode = $countryCode . $regionCode;
+                            @endphp
+                            <span class="fi fi-{{ $flagCode }} text-2xl"></span>
+                        </div>
                     </li>
                     @endauth
                     <li class="nav-item">

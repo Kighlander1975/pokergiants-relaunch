@@ -112,7 +112,7 @@
 
         <!-- Country Flag -->
         <div class="my-auth-forms">
-            <label for="country_flag" class="block text-sm font-medium text-gray-700">Ländercode (z.B. de_DE)</label>
+            <label for="country_flag" class="block text-sm font-medium text-gray-700">Ländercode (z.B. de_DE, gb_SCT)</label>
             <input type="text" name="country_flag" id="country_flag"
                 value="{{ old('country_flag', $user->userDetail->country_flag ?? 'de_DE') }}"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"

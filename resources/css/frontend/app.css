@@ -2,6 +2,7 @@
 @import "../pages/login.css";
 @import "../pages/register.css";
 @import "./suit.css";
+@import "flag-icons/css/flag-icons.min.css";
 
 /* Frontend specific styles */
 body {
