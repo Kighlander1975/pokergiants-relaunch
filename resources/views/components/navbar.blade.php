@@ -19,30 +19,24 @@
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('home') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="{{ route('home') }}">
                             <span class="mso me-2">home</span>
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="/about">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="/about">
                             <span class="mso me-2">diversity_3</span>
                             Über uns
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="/contact">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="/contact">
                             <span class="mso me-2">chat</span>
                             Kontakt
                         </a>
                     </li>
                     @auth
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('profile.show') }}">
-                            <span class="mso me-2">person</span>
-                            Profil
-                        </a>
-                    </li>
                     @if(in_array(auth()->user()->userDetail->role ?? 'player', ['admin', 'floorman']))
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('dashboard') }}">
@@ -52,31 +46,31 @@
                     </li>
                     @endif
                     @auth
-                    <li class="nav-item" style="margin-right: 4px;">
-                        <x-avatar
-                            :image-filename="auth()->user()->userDetail->avatar_image_filename ?? null"
-                            :firstname="auth()->user()->userDetail->firstname ?? null"
-                            :lastname="auth()->user()->userDetail->lastname ?? null"
-                            :nickname="auth()->user()->nickname"
-                            size="48" />
-                    </li>
-                    <li class="nav-item">
-                        <div class="d-flex align-items-center px-1 py-2">
-                            @php
-                            $countryFlag = auth()->user()->userDetail->country_flag ?? 'de_DE';
-                            $parts = explode('_', $countryFlag);
-                            $countryCode = strtolower($parts[0]);
-                            $regionCode = isset($parts[1]) ? '-' . strtolower($parts[1]) : '';
-                            $flagCode = $countryCode . $regionCode;
-                            @endphp
-                            <span class="fi fi-{{ $flagCode }} text-2xl"></span>
-                        </div>
+                    <li class="nav-item min-h-[48px]">
+                        <a class="nav-link d-flex align-items-center px-2 sm:py-2" href="{{ route('profile.show') }}">
+                            <x-avatar
+                                :image-filename="auth()->user()->userDetail->avatar_image_filename ?? null"
+                                :firstname="auth()->user()->userDetail->firstname ?? null"
+                                :lastname="auth()->user()->userDetail->lastname ?? null"
+                                :nickname="auth()->user()->nickname"
+                                size="48" />
+                            <div class="ms-1">
+                                @php
+                                $countryFlag = auth()->user()->userDetail->country_flag ?? 'de_DE';
+                                $parts = explode('_', $countryFlag);
+                                $countryCode = strtolower($parts[0]);
+                                $regionCode = isset($parts[1]) ? '-' . strtolower($parts[1]) : '';
+                                $flagCode = $countryCode . $regionCode;
+                                @endphp
+                                <span class="fi fi-{{ $flagCode }} text-2xl"></span>
+                            </div>
+                        </a>
                     </li>
                     @endauth
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}" class="d-inline">
                             @csrf
-                            <button type="submit" class="nav-link d-flex align-items-center sm:py-2">
+                            <button type="submit" class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]">
                                 <span class="mso me-2">logout</span>
                                 Logout
                             </button>
@@ -85,19 +79,19 @@
                     @endauth
                     @guest
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('verification.send') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[48px]" href="{{ route('verification.send') }}">
                             <span class="mso me-2">mail</span>
                             E-Mail verifizieren
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('login') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[48px]" href="{{ route('login') }}">
                             <span class="mso me-2">login</span>
                             Login
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('register') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[48px]" href="{{ route('register') }}">
                             <span class="mso me-2">app_registration</span>
                             Registrieren
                         </a>

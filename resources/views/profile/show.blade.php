@@ -103,7 +103,19 @@
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Land</label>
-            <p class="mt-1 text-gray-900">{{ $user->userDetail->country ?? 'Nicht angegeben' }}</p>
+            <p class="mt-1 text-gray-900">
+                @php
+                $countryMap = [
+                'DE' => 'Deutschland',
+                'AT' => 'Österreich',
+                'CH' => 'Schweiz',
+                'Other' => 'Kein DACH-Land'
+                ];
+                $countryCode = $user->userDetail->country ?? 'DE';
+                $countryName = $countryMap[$countryCode] ?? $countryCode;
+                @endphp
+                {{ $countryName }}
+            </p>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Geburtsdatum</label>
@@ -111,6 +123,14 @@
                 {{ $user->userDetail->dob ? $user->userDetail->dob->format('d.m.Y') : 'Nicht angegeben' }}
             </p>
         </div>
+    </div>
+</div>
+<div class="glass-card one-card one-card-100">
+    <h3 class="text-xl font-semibold mb-1">Über mich</h3>
+    <div>
+        <p class="mt-1 text-gray-900 whitespace-pre-line">
+            {{ $user->userDetail->bio ?? 'Keine Biografie angegeben.' }}
+        </p>
     </div>
 </div>
 @endif

@@ -12,9 +12,17 @@ Route::get('/', function () {
     return view('layouts.frontend.pages.home');
 })->name('home');
 
+Route::get('/about', function () {
+    return view('layouts.frontend.pages.about');
+})->name('about')->withoutMiddleware(['check.user.details']);
+
 Route::get('/registration-success', function () {
     return view('layouts.frontend.pages.registration-success');
 })->name('registration.success');
+
+Route::fallback(function () {
+    return view('errors.404');
+})->name('404')->withoutMiddleware(['check.user.details']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
