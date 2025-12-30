@@ -1,0 +1,13 @@
+/* Suit component styles */
+.suit {
+    font-weight: bold;
+    display: inline-block;
+}
+
+.suit-red {
+    color: red;
+}
+
+.suit-black {
+    color: black;
+}

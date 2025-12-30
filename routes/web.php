@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('layouts.frontend.pages.home');
@@ -15,7 +16,9 @@ Route::get('/registration-success', function () {
 })->name('registration.success');
 
 Route::get('/dashboard', function () {
-    if (!in_array(auth()->user()->userDetail->role ?? 'player', ['admin', 'floorman'])) {
+    /** @var \App\Models\User|null $user */
+    $user = Auth::user();
+    if (!$user || !in_array($user->userDetail->role ?? 'player', ['admin', 'floorman'])) {
         abort(403, 'Unauthorized');
     }
     return view('dashboard');

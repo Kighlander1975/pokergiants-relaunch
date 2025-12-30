@@ -2,36 +2,20 @@
 @props(['type', 'size' => 'inherit'])
 
 @php
+/** @var string $type */
+/** @var string $size */
 $symbols = [
 'club' => '♣',
 'spade' => '♠',
 'heart' => '♥',
 'diamond' => '♦',
 ];
+/** @var string $symbol */
 $symbol = $symbols[$type] ?? '';
+/** @var string $color */
+$color = in_array($type, ['heart', 'diamond']) ? 'red' : 'black';
 @endphp
 
-<style>
-    .suit {
-        font-size: {
-                {
-                $size ?: 'inherit'
-            }
-        }
-
-        ;
-        font-weight: bold;
-    }
-
-    .suit-heart,
-    .suit-diamond {
-        color: red;
-    }
-
-    .suit-club,
-    .suit-spade {
-        color: black;
-    }
-</style>
-
-<span class="suit suit-{{ $type }}">{{ $symbol }}</span>
+<span class="suit suit-{{ $type }} suit-{{ $color }}">
+    {{ $symbol }}
+</span>

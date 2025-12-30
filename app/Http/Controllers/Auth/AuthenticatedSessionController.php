@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if (!$user->hasVerifiedEmail()) {
+        if (is_null($user->email_verified_at)) {
             Auth::logout();
             return redirect(route('verification.notice', absolute: false));
         }

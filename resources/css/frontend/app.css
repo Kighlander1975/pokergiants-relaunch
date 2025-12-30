@@ -1,6 +1,7 @@
 @import "../layout.css";
 @import "../pages/login.css";
 @import "../pages/register.css";
+@import "./suit.css";
 
 /* Frontend specific styles */
 body {

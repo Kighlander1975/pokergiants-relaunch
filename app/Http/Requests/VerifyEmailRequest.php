@@ -6,6 +6,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class VerifyEmailRequest extends EmailVerificationRequest
 {
+    private ?\Illuminate\Contracts\Auth\MustVerifyEmail $verifiedUser = null;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -18,7 +20,7 @@ class VerifyEmailRequest extends EmailVerificationRequest
             return false;
         }
 
-        $this->user = $user; // Set the user for fulfill()
+        $this->verifiedUser = $user;
 
         if (! hash_equals((string) $user->getKey(), (string) $this->route('id'))) {
             return false;
@@ -29,5 +31,13 @@ class VerifyEmailRequest extends EmailVerificationRequest
         }
 
         return true;
+    }
+
+    /**
+     * Get the user that should be verified.
+     */
+    public function user($guard = null): \Illuminate\Contracts\Auth\MustVerifyEmail
+    {
+        return $this->verifiedUser ?: parent::user($guard);
     }
 }
