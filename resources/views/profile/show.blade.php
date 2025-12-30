@@ -115,10 +115,10 @@
     </div>
     <h3 class="text-xl font-semibold mb-2">Zugangsdaten</h3>
     <p class="text-gray-600 mb-4">E-Mail und Passwort ändern</p>
-    <button class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-200 cursor-not-allowed opacity-50"
-        disabled>
-        Bald verfügbar
-    </button>
+    <a href="{{ route('credentials.edit') }}"
+        class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-200">
+        Zugangsdaten ändern
+    </a>
 </div>
 
 

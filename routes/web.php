@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\ProfileCompletionController;
+use App\Http\Controllers\CredentialsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Support\AvatarTempCleanup;
@@ -62,6 +63,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Credentials routes
+    Route::get('/credentials', [CredentialsController::class, 'edit'])->name('credentials.edit');
+    Route::patch('/credentials/email', [CredentialsController::class, 'updateEmail'])->name('credentials.update.email');
+    Route::patch('/credentials/password', [CredentialsController::class, 'updatePassword'])->name('credentials.update.password');
+    Route::get('/credentials/verify-email/{token}', [CredentialsController::class, 'verifyEmailChange'])->name('credentials.verify.email');
 });
 
 Route::get('/dev/cleanup-temp-avatars', function () {

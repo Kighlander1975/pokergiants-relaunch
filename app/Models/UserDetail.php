@@ -27,6 +27,11 @@ class UserDetail extends Model implements HasMedia
         'dob',
         'giants_card',
         'avatar_display_mode',
+        'pending_email',
+        'email_change_token',
+        'email_change_expires_at',
+        'email_change_requested_at',
+        'password_change_blocked',
     ];
 
     protected $casts = [
