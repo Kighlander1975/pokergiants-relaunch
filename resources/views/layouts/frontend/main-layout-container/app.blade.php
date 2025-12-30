@@ -13,9 +13,10 @@
 <body>
     <x-navbar />
     @yield('content-title')
-    <div class="glass-container">
+    <div class="glass-container mb-5">
         @yield('content-body')
     </div>
+    <x-footer />
 
     <div style="background: red; color: white; padding: 10px; position: fixed; top: 0; z-index: 9999;">
         Status: {{ Auth::check() ? 'Eingeloggt als ' . Auth::user()->email : 'Nicht eingeloggt' }}

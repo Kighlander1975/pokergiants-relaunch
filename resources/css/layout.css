@@ -33,6 +33,7 @@ body {
     gap: 1rem;
     width: 95%;
     justify-content: flex-start;
+    min-height: 900px;
 }
 
 @media (min-width: 1400px) {
