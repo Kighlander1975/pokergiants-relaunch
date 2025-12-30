@@ -1,0 +1,33 @@
+.glass-card label {
+    font-size: 1.25rem;
+    color: white;
+    font-weight: 800;
+    text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
+        -1px 1px 0 #000, 1px 1px 0 #000;
+    margin-bottom: 0.5rem;
+}
+.glass-card label span {
+    color: white !important;
+}
+.glass-card .my-auth-forms input[type="email"],
+.glass-card .my-auth-forms input[type="text"] {
+    font-family: "Courier New", Courier, monospace;
+}
+
+/* Prevent text selection on register page, except inputs */
+.register {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.register input,
+.register textarea,
+.register select,
+.register a {
+    user-select: auto;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+}

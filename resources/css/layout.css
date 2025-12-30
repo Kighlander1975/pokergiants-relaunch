@@ -1,0 +1,222 @@
+@font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    src: url("../fonts/material-symbols-outlined-v303-latin-regular.woff2")
+        format("woff");
+}
+
+.mso {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px; /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+}
+
+.glass-container {
+    margin-top: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 95%;
+    justify-content: flex-start;
+}
+
+@media (min-width: 1400px) {
+    .glass-container {
+        width: 75%;
+    }
+}
+
+.my-width-33 {
+    flex: none !important;
+    width: 33% !important;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 24px 12px rgba(255, 255, 255, 1.2);
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* Responsive Default Breiten für .glass-card */
+@media (min-width: 1401px) {
+    .glass-card {
+        flex: 0 0 25% !important;
+    }
+}
+
+@media (min-width: 391px) and (max-width: 1400px) {
+    .glass-card {
+        flex: 0 0 50% !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .glass-card {
+        flex: 0 0 100% !important;
+    }
+}
+
+/* One-Card Klassen */
+.one-card {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+}
+
+.one-card-25 {
+    max-width: 25% !important;
+    margin: 0 auto !important;
+}
+
+.one-card-33 {
+    max-width: 33% !important;
+    margin: 0 auto !important;
+}
+
+.one-card-50 {
+    max-width: 50% !important;
+    margin: 0 auto !important;
+}
+
+.one-card-66 {
+    max-width: 66% !important;
+    margin: 0 auto !important;
+}
+
+.one-card-75 {
+    max-width: 75% !important;
+    margin: 0 auto !important;
+}
+
+.one-card-100 {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* Auf kleinen Displays alle one-card-XX zu 100% machen */
+@media (max-width: 390px) {
+    .one-card-25,
+    .one-card-33,
+    .one-card-50,
+    .one-card-66,
+    .one-card-75,
+    .one-card-100 {
+        max-width: 100% !important;
+        margin: 0 auto !important;
+    }
+}
+
+/* Wrapper for one-card to force new line */
+.one-card-wrapper {
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Hilfsklassen für feste Breiten bei normalen Cards */
+.card-100 {
+    flex: 0 0 100% !important;
+}
+
+.card-75 {
+    flex: 0 0 73% !important;
+}
+
+.card-66 {
+    flex: 0 0 64% !important;
+}
+
+.card-50 {
+    flex: 0 0 48% !important;
+}
+
+.card-33 {
+    flex: 0 0 31% !important;
+}
+
+.card-25 {
+    flex: 0 0 23% !important;
+}
+
+.card-10 {
+    flex: 0 0 8% !important;
+}
+
+/* Auf kleinen Displays alle card-XX zu 100% machen */
+@media (max-width: 390px) {
+    .card-100,
+    .card-75,
+    .card-66,
+    .card-50,
+    .card-33,
+    .card-25,
+    .card-10 {
+        flex: 0 0 100% !important;
+    }
+}
+
+/* Responsive Hilfsklasse für Zentrierung auf kleinen Displays */
+.center-on-small {
+    /* Keine globale Regel */
+}
+
+@media (max-width: 390px) {
+    .center-on-small {
+        margin: 0 auto !important;
+    }
+}
+
+.glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.8),
+        transparent
+    );
+}
+
+.glass-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.8),
+        transparent,
+        rgba(255, 255, 255, 0.3)
+    );
+}

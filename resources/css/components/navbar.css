@@ -1,0 +1,191 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 155px;
+}
+
+.myBlur {
+    /* Hier können zusätzliche Eigenschaften stehen, falls nötig */
+}
+
+.navimage {
+    /* Hier können zusätzliche Eigenschaften stehen, falls nötig */
+}
+
+.navbar-brand .navbar-logo {
+    max-height: 75px;
+    padding: 5px;
+}
+
+.navbar-brand a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.navbar-brand-text {
+    font-size: 1.8em;
+    letter-spacing: 0.2em;
+    color: white;
+    font-weight: 900;
+    -webkit-text-stroke: 1px black;
+    text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
+        -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-menu li {
+    margin-left: 1rem;
+}
+
+.navbar-menu a {
+    text-decoration: none;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+@media (min-width: 992px) {
+    .navimage {
+        background-color: #000 !important;
+        background-image: url("/images/titel.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .myBlur {
+        background-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(8px);
+        border-radius: 0.5rem;
+        width: 95% !important;
+        margin: 0px auto;
+    }
+
+    .navbar .nav-item {
+        margin-right: 1.25rem;
+    }
+
+    .navbar .nav-item a.nav-link {
+        font-size: 1.2rem;
+    }
+
+    .navbar a.nav-link {
+        color: white;
+        background: transparent;
+        border-radius: 16px;
+        border: 2px solid rgb(255, 255, 255);
+        position: relative;
+        transition: border 0.3s ease, border-radius 0.3s ease;
+    }
+
+    .navbar a.nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgb(255, 255, 255);
+        transition: width 0.3s ease;
+        z-index: -1;
+        border-radius: 16px;
+    }
+
+    .navbar a.nav-link:hover::after {
+        width: 100%;
+    }
+
+    .navbar a.nav-link:hover {
+        color: black;
+        border: 2px solid black;
+    }
+
+    .navbar button.nav-link {
+        color: white;
+        background: transparent;
+        border-radius: 16px;
+        border: 2px solid rgb(255, 255, 255);
+        position: relative;
+        transition: border 0.3s ease, border-radius 0.3s ease;
+        padding: 0.375rem 0.75rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+
+    .navbar button.nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgb(255, 255, 255);
+        transition: width 0.3s ease;
+        z-index: -1;
+        border-radius: 16px;
+    }
+
+    .navbar button.nav-link:hover::after {
+        width: 100%;
+    }
+
+    .navbar button.nav-link:hover {
+        color: black;
+        border: 2px solid black;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        padding: 1rem 0;
+    }
+
+    .navbar-menu.show {
+        display: flex;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+}
+
+@media (max-width: 992px) {
+    .offcanvas.offcanvas-end {
+        width: 75%;
+    }
+}

@@ -16,7 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('layouts.frontend.pages.login');
     }
 
     /**
@@ -28,7 +28,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+        if (!$user->hasVerifiedEmail()) {
+            Auth::logout();
+            return redirect(route('verification.notice', absolute: false));
+        }
+
+        $role = $user->userDetail->role ?? 'player';
+
+        if (in_array($role, ['admin', 'floorman'])) {
+            return redirect()->intended(route('dashboard', absolute: false));
+        } else {
+            return redirect()->intended(route('home', absolute: false));
+        }
     }
 
     /**

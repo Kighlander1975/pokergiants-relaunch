@@ -1,0 +1,12 @@
+/* Backend specific styles */
+.backend-body {
+    background-image: none;
+}
+
+.backend-header {
+    /* Add backend header styles */
+}
+
+.backend-content {
+    /* Add backend content styles */
+}

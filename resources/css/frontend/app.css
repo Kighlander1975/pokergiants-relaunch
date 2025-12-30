@@ -1,0 +1,11 @@
+@import "../layout.css";
+@import "../pages/login.css";
+@import "../pages/register.css";
+
+/* Frontend specific styles */
+body {
+    background-image: url("http://127.0.0.1:8000/images/pokergiants_background.jpg") !important;
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
+}
