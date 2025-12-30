@@ -13,6 +13,13 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
+     * The name of the "name" column in the database.
+     *
+     * @var string
+     */
+    protected $name = 'nickname';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
