@@ -46,13 +46,13 @@
                         <label class="flex items-center">
                             <input type="checkbox" name="is_published" value="1" {{ old('is_published', $page->is_published) ? 'checked' : '' }}
                                 class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm text-gray-700">Published</span>
+                            <span class="ml-2 text-sm text-gray-700">Veröffentlicht</span>
                         </label>
                     </div>
 
                     <div class="flex justify-end space-x-4">
-                        <a href="{{ route('admin.pages') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancel</a>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Update Page</button>
+                        <a href="{{ route('admin.pages') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Abbrechen</a>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Seite aktualisieren</button>
                     </div>
                 </form>
             </div>

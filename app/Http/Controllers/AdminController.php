@@ -60,13 +60,13 @@ class AdminController extends Controller
             'bio' => $request->bio,
         ]);
 
-        return redirect()->route('admin.users')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.users')->with('success', 'Benutzer erfolgreich aktualisiert.');
     }
 
     public function deleteUser(User $user)
     {
         $user->delete();
-        return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users')->with('success', 'Benutzer erfolgreich gelöscht.');
     }
 
     // CMS Methods
@@ -92,7 +92,7 @@ class AdminController extends Controller
 
         Page::create($request->all());
 
-        return redirect()->route('admin.pages')->with('success', 'Page created successfully.');
+        return redirect()->route('admin.pages')->with('success', 'Seite erfolgreich erstellt.');
     }
 
     public function editPage(Page $page)
@@ -111,12 +111,12 @@ class AdminController extends Controller
 
         $page->update($request->all());
 
-        return redirect()->route('admin.pages')->with('success', 'Page updated successfully.');
+        return redirect()->route('admin.pages')->with('success', 'Seite erfolgreich aktualisiert.');
     }
 
     public function deletePage(Page $page)
     {
         $page->delete();
-        return redirect()->route('admin.pages')->with('success', 'Page deleted successfully.');
+        return redirect()->route('admin.pages')->with('success', 'Seite erfolgreich gelöscht.');
     }
 }

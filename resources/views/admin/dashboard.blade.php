@@ -20,7 +20,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Total Users</p>
+                            <p class="text-sm font-medium text-gray-600">Gesamt Benutzer</p>
                             <p class="text-2xl font-semibold text-gray-900">{{ $totalUsers }}</p>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Active Admins</p>
+                            <p class="text-sm font-medium text-gray-600">Aktive Administratoren</p>
                             <p class="text-2xl font-semibold text-gray-900">{{ $adminUsers->count() }}</p>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Recent Registrations</p>
+                            <p class="text-sm font-medium text-gray-600">Neue Registrierungen</p>
                             <p class="text-2xl font-semibold text-gray-900">{{ $recentUsers->count() }}</p>
                         </div>
                     </div>
@@ -63,16 +63,16 @@
         <!-- Recent Users -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Users</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Neue Benutzer</h3>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nickname</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registered</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spitzname</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-Mail</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rolle</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registriert</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -83,7 +83,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->userDetail->role ?? 'player' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d.m.Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Bearbeiten</a>
                                 </td>
                             </tr>
                             @endforeach
@@ -91,7 +91,7 @@
                     </table>
                 </div>
                 <div class="mt-4">
-                    <a href="{{ route('admin.users') }}" class="text-indigo-600 hover:text-indigo-900">View all users</a>
+                    <a href="{{ route('admin.users') }}" class="text-indigo-600 hover:text-indigo-900">Alle Benutzer anzeigen</a>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
         <!-- Admin Users -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Admin Users</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Administratoren</h3>
                 <div class="space-y-2">
                     @foreach($adminUsers as $admin)
                     <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
