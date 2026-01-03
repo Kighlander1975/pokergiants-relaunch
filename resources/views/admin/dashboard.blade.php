@@ -90,7 +90,7 @@
                                         @if($user->updated_at >= now()->subDays(30))
                                         <x-icon name="shield-alt" class="w-5 h-5 text-green-500" />
                                         @else
-                                        <x-icon name="shield-alt" type="far" class="w-5 h-5 text-gray-400" />
+                                        <x-icon name="shield-alt" class="w-5 h-5 text-gray-400" />
                                         @endif
                                     </div>
                                 </td>
@@ -107,7 +107,7 @@
                 <!-- Status Legend -->
                 <div class="mt-6 bg-gray-50 rounded-lg p-4">
                     <h4 class="text-sm font-medium text-gray-900 mb-3">Status-Symbole Legende</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-2 text-sm">
                         <div class="flex items-center space-x-2">
                             <x-icon name="envelope" class="w-5 h-5 text-blue-500" />
                             <span class="text-gray-700">E-Mail verifiziert</span>
@@ -129,7 +129,7 @@
                             <span class="text-gray-700">Aktiv (letzte 30 Tage)</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <x-icon name="shield-alt" type="far" class="w-5 h-5 text-gray-400" />
+                            <x-icon name="shield-alt" class="w-5 h-5 text-gray-400" />
                             <span class="text-gray-700">Inaktiv (über 30 Tage)</span>
                         </div>
                     </div>
