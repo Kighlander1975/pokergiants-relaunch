@@ -13,10 +13,11 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         $totalUsers = User::count();
-        $recentUsers = User::with('userDetail')->where('created_at', '>=', now()->subDays(14))->latest()->get();
+        $perPage = $request->get('per_page', 5); // Default 5, kann 5, 10, 25, 50 sein
+        $recentUsers = User::with('userDetail')->where('created_at', '>=', now()->subDays(14))->latest()->take($perPage)->get();
         $adminUsers = UserDetail::whereIn('role', ['admin', 'floorman'])->with('user')->get();
 
         // Neue Statistiken

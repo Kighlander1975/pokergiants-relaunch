@@ -43,13 +43,13 @@
                             <label class="block text-sm font-medium text-gray-700">E-Mail verifiziert</label>
                             <p class="mt-1 text-sm text-gray-900">
                                 @if($user->email_verified_at)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Ja - {{ $user->email_verified_at->format('d.m.Y H:i') }}
-                                    </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Ja - {{ $user->email_verified_at->format('d.m.Y H:i') }}
+                                </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Nein
-                                    </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    Nein
+                                </span>
                                 @endif
                             </p>
                         </div>

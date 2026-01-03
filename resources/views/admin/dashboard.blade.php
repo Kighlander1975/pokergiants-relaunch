@@ -11,247 +11,128 @@
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-blue-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Gesamt Benutzer</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $totalUsers }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-blue-500" icon="users" label="Gesamt Benutzer" :value="$totalUsers" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-green-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Aktive Administratoren</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $adminUsers->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-green-500" icon="user-shield" label="Aktive Administratoren" :value="$adminUsers->count()" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-yellow-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Neue Registrierungen</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $recentUsers->count() }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-yellow-500" icon="chart-line" label="Neue Registrierungen" :value="$recentUsers->count()" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-green-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Aktive Registrierungen (24h)</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $activeUsers24h }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-green-500" icon="bolt" label="Aktive Registrierungen (24h)" :value="$activeUsers24h" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-gray-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Inaktive Benutzer (30+ Tage)</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $inactiveUsers }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-gray-500" icon="shield-alt" label="Inaktive Benutzer (30+ Tage)" :value="$inactiveUsers" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-purple-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Benutzer mit Avatar</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $usersWithAvatars }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-purple-500" icon="user-circle" label="Benutzer mit Avatar" :value="$usersWithAvatars" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-orange-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Benutzer ohne Avatar</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $usersWithoutAvatars }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-orange-500" icon="user" label="Benutzer ohne Avatar" :value="$usersWithoutAvatars" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-blue-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Verifizierte E-Mails</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $verifiedEmails }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-blue-500" icon="envelope" label="Verifizierte E-Mails" :value="$verifiedEmails" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-red-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Nicht verifizierte E-Mails</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $unverifiedEmails }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-red-500" icon="envelope-open" label="Nicht verifizierte E-Mails" :value="$unverifiedEmails" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-indigo-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Benutzer mit Profil</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $usersWithProfile }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-indigo-500" icon="file-alt" label="Benutzer mit Profil" :value="$usersWithProfile" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-teal-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Benutzer ohne Profil</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $usersWithoutProfile }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-teal-500" icon="file" label="Benutzer ohne Profil" :value="$usersWithoutProfile" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-cyan-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Gesamt Seiten</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $totalPages }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-cyan-500" icon="copy" label="Gesamt Seiten" :value="$totalPages" />
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-emerald-500 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Veröffentlichte Seiten</p>
-                            <p class="text-2xl font-semibold text-gray-900 count-up">{{ $publishedPages }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-statistic-card bgColor="bg-emerald-500" icon="star" label="Veröffentlichte Seiten" :value="$publishedPages" />
         </div>
 
         <!-- Recent Users -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Neue Benutzer</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Neue Benutzer</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <label for="per_page" class="text-sm text-gray-600">Anzeigen:</label>
+                            <select id="per_page" name="per_page" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>5</option>
+                                <option value="10" {{ request('per_page', 5) == 10 ? 'selected' : '' }}>10</option>
+                                <option value="25" {{ request('per_page', 5) == 25 ? 'selected' : '' }}>25</option>
+                                <option value="50" {{ request('per_page', 5) == 50 ? 'selected' : '' }}>50</option>
+                            </select>
+                        </div>
+                        <a href="{{ route('admin.users') }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Alle Benutzer anzeigen</a>
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spitzname</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-Mail</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rolle</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registriert</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($recentUsers as $user)
-                            <tr>
+                            <tr class="hover:bg-indigo-50 cursor-pointer transition-colors duration-150" onclick="window.location.href='{{ route('admin.users.show', $user) }}'">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center space-x-2">
+                                        <!-- E-Mail Verifizierung -->
+                                        @if($user->email_verified_at)
+                                        <x-icon name="envelope" class="w-5 h-5 text-blue-500" />
+                                        @else
+                                        <x-icon name="envelope-open" class="w-5 h-5 text-gray-400" />
+                                        @endif
+
+                                        <!-- Avatar Status -->
+                                        @if($user->userDetail->getFirstMedia('avatar'))
+                                        <x-icon name="user-circle" class="w-5 h-5 text-purple-500" />
+                                        @else
+                                        <x-icon name="user-circle" type="far" class="w-5 h-5 text-purple-500" />
+                                        @endif
+
+                                        <!-- Aktivität Status (30 Tage) -->
+                                        @if($user->updated_at >= now()->subDays(30))
+                                        <x-icon name="shield-alt" class="w-5 h-5 text-green-500" />
+                                        @else
+                                        <x-icon name="shield-alt" type="far" class="w-5 h-5 text-gray-400" />
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user->nickname }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->userDetail->role ?? 'player' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d.m.Y') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('admin.users.show', $user) }}" class="text-indigo-600 hover:text-indigo-900">Anzeigen</a>
-                                </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-4">
-                    <a href="{{ route('admin.users') }}" class="text-indigo-600 hover:text-indigo-900">Alle Benutzer anzeigen</a>
+
+                <!-- Status Legend -->
+                <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                    <h4 class="text-sm font-medium text-gray-900 mb-3">Status-Symbole Legende</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <x-icon name="envelope" class="w-5 h-5 text-blue-500" />
+                            <span class="text-gray-700">E-Mail verifiziert</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <x-icon name="envelope-open" class="w-5 h-5 text-gray-400" />
+                            <span class="text-gray-700">E-Mail nicht verifiziert</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <x-icon name="user-circle" class="w-5 h-5 text-purple-500" />
+                            <span class="text-gray-700">Avatar vorhanden</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <x-icon name="user-circle" type="far" class="w-5 h-5 text-purple-500" />
+                            <span class="text-gray-700">Kein Avatar</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <x-icon name="shield-alt" class="w-5 h-5 text-green-500" />
+                            <span class="text-gray-700">Aktiv (letzte 30 Tage)</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <x-icon name="shield-alt" type="far" class="w-5 h-5 text-gray-400" />
+                            <span class="text-gray-700">Inaktiv (über 30 Tage)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -278,4 +159,13 @@
 
     </div>
 </div>
+
+<script>
+    document.getElementById('per_page').addEventListener('change', function() {
+        const perPage = this.value;
+        const url = new URL(window.location);
+        url.searchParams.set('per_page', perPage);
+        window.location.href = url.toString();
+    });
+</script>
 @endsection
