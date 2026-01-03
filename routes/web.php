@@ -39,9 +39,24 @@ Route::fallback(function () {
     return view('errors.404');
 })->name('404')->withoutMiddleware(['check.user.details']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'check.role:admin,floorman'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])
+    ->middleware(['auth', 'verified', 'check.role:admin,floorman'])->name('dashboard');
+
+// Admin routes
+Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('users.edit');
+    Route::patch('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+
+    // CMS routes
+    Route::get('/pages', [App\Http\Controllers\AdminController::class, 'pages'])->name('pages');
+    Route::get('/pages/create', [App\Http\Controllers\AdminController::class, 'createPage'])->name('pages.create');
+    Route::post('/pages', [App\Http\Controllers\AdminController::class, 'storePage'])->name('pages.store');
+    Route::get('/pages/{page}/edit', [App\Http\Controllers\AdminController::class, 'editPage'])->name('pages.edit');
+    Route::patch('/pages/{page}', [App\Http\Controllers\AdminController::class, 'updatePage'])->name('pages.update');
+    Route::delete('/pages/{page}', [App\Http\Controllers\AdminController::class, 'deletePage'])->name('pages.delete');
+});
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])
     ->middleware('auth')

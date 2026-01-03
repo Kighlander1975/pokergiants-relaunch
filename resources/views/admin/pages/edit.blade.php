@@ -17,7 +17,7 @@
                     <div class="mb-4">
                         <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
                         <input type="text" name="title" id="title" value="{{ old('title', $page->title) }}" required
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -26,7 +26,7 @@
                     <div class="mb-4">
                         <label for="slug" class="block text-sm font-medium text-gray-700">Slug</label>
                         <input type="text" name="slug" id="slug" value="{{ old('slug', $page->slug) }}" required
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         @error('slug')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -36,7 +36,7 @@
                     <div class="mb-4">
                         <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
                         <textarea name="content" id="content" rows="10" required
-                                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">{{ old('content', $page->content) }}</textarea>
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">{{ old('content', $page->content) }}</textarea>
                         @error('content')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -45,7 +45,7 @@
                     <div class="mb-4">
                         <label class="flex items-center">
                             <input type="checkbox" name="is_published" value="1" {{ old('is_published', $page->is_published) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             <span class="ml-2 text-sm text-gray-700">Published</span>
                         </label>
                     </div>
