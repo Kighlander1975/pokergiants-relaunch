@@ -19,7 +19,35 @@ class AdminController extends Controller
         $recentUsers = User::with('userDetail')->latest()->take(5)->get();
         $adminUsers = UserDetail::whereIn('role', ['admin', 'floorman'])->with('user')->get();
 
-        return view('admin.dashboard', compact('totalUsers', 'recentUsers', 'adminUsers'));
+        // Neue Statistiken
+        $activeUsers24h = User::where('created_at', '>=', now()->subDay())->count();
+        $inactiveUsers = User::where('created_at', '<', now()->subDays(30))->count();
+        $usersWithAvatars = UserDetail::whereHas('media', function ($query) {
+            $query->where('collection_name', 'avatar');
+        })->count();
+        $usersWithoutAvatars = $totalUsers - $usersWithAvatars;
+        $verifiedEmails = User::whereNotNull('email_verified_at')->count();
+        $unverifiedEmails = $totalUsers - $verifiedEmails;
+        $usersWithProfile = UserDetail::whereNotNull('firstname')->orWhereNotNull('lastname')->orWhereNotNull('city')->count();
+        $usersWithoutProfile = $totalUsers - $usersWithProfile;
+        $totalPages = \App\Models\Page::count();
+        $publishedPages = \App\Models\Page::where('is_published', true)->count();
+
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'recentUsers',
+            'adminUsers',
+            'activeUsers24h',
+            'inactiveUsers',
+            'usersWithAvatars',
+            'usersWithoutAvatars',
+            'verifiedEmails',
+            'unverifiedEmails',
+            'usersWithProfile',
+            'usersWithoutProfile',
+            'totalPages',
+            'publishedPages'
+        ));
     }
 
     public function users()

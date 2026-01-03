@@ -65,3 +65,24 @@ function showToast(message, type = "info") {
         toastElement.remove();
     });
 }
+
+// Count-up animation for dashboard statistics
+document.addEventListener("DOMContentLoaded", function () {
+    const countElements = document.querySelectorAll(".count-up");
+
+    countElements.forEach((element) => {
+        const targetValue = parseInt(element.textContent.replace(/\D/g, ""));
+        let currentValue = 0;
+        const duration = 500; // 0.5 seconds
+        const increment = targetValue / (duration / 16); // 60 FPS
+
+        const timer = setInterval(() => {
+            currentValue += increment;
+            if (currentValue >= targetValue) {
+                currentValue = targetValue;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(currentValue).toLocaleString();
+        }, 16);
+    });
+});
