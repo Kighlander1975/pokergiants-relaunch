@@ -174,33 +174,39 @@ body {
 /* Hilfsklassen für feste Breiten bei normalen Cards */
 .card-100 {
     flex: 0 0 100% !important;
+    max-width: 100% !important;
 }
 
 .card-75 {
     flex: 0 0 73% !important;
+    max-width: 73% !important;
 }
 
 .card-66 {
     flex: 0 0 64% !important;
+    max-width: 64% !important;
 }
 
 .card-50 {
     flex: 0 0 48% !important;
-}
-
-.card-33 {
-    flex: 0 0 31% !important;
+    max-width: 48% !important;
 }
 
 .card-25 {
     flex: 0 0 23% !important;
+    max-width: 23% !important;
+}
+
+.card-33 {
+    flex: 0 0 31% !important;
+    max-width: 31% !important;
 }
 
 .card-10 {
     flex: 0 0 8% !important;
 }
 
-/* Auf kleinen Displays alle card-XX zu 100% machen */
+/* Auf kleinen Displays alle card-XX zu 98% machen für besseres Padding */
 @media (max-width: 390px) {
     .card-100,
     .card-75,
@@ -209,7 +215,8 @@ body {
     .card-33,
     .card-25,
     .card-10 {
-        flex: 0 0 100% !important;
+        flex: 0 0 98% !important;
+        max-width: 98% !important;
     }
 }
 

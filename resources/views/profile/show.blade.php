@@ -22,12 +22,9 @@
 
         @php
         $countryFlag = $user->userDetail->country_flag ?? 'de_DE';
-        $parts = explode('_', $countryFlag);
-        $countryCode = strtolower($parts[0]);
-        $regionCode = isset($parts[1]) ? '-' . strtolower($parts[1]) : '';
-        $flagCode = $countryCode . $regionCode;
+        $flagCode = getFlagCode($countryFlag);
         @endphp
-        <span class="fi fi-{{ $flagCode }} text-6xl"></span>
+        <span class="fi fi-{{ $flagCode }} text-4xl"></span>
 
         <div>
             <h2 class="text-2xl font-bold">{{ $user->nickname }}</h2>

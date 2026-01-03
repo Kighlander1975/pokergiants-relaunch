@@ -16,7 +16,8 @@ class CredentialsController extends Controller
 {
     public function edit()
     {
-        return view('credentials.edit');
+        $user = auth()->user();
+        return view('credentials.edit', compact('user'));
     }
 
     public function updateEmail(UpdateEmailRequest $request)

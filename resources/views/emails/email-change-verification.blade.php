@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>E-Mail-Adresse bestätigen</title>
 </head>
+
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #000; text-align: center;">E-Mail-Adresse bestätigen</h1>
@@ -29,7 +31,8 @@
         <p>Wenn Sie diese Änderung nicht angefordert haben, ignorieren Sie diese E-Mail.</p>
 
         <p>Mit freundlichen Grüßen,<br>
-        Ihr Poker Giants Team</p>
+            Ihr Poker Giants Team</p>
     </div>
 </body>
+
 </html>

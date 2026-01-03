@@ -58,10 +58,7 @@
                             <div class="ms-1">
                                 @php
                                 $countryFlag = auth()->user()->userDetail->country_flag ?? 'de_DE';
-                                $parts = explode('_', $countryFlag);
-                                $countryCode = strtolower($parts[0]);
-                                $regionCode = isset($parts[1]) ? '-' . strtolower($parts[1]) : '';
-                                $flagCode = $countryCode . $regionCode;
+                                $flagCode = getFlagCode($countryFlag);
                                 @endphp
                                 <span class="fi fi-{{ $flagCode }} text-2xl"></span>
                             </div>
