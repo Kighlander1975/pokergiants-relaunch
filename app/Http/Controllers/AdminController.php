@@ -16,7 +16,7 @@ class AdminController extends Controller
     public function dashboard()
     {
         $totalUsers = User::count();
-        $recentUsers = User::with('userDetail')->latest()->take(5)->get();
+        $recentUsers = User::with('userDetail')->where('created_at', '>=', now()->subDays(14))->latest()->get();
         $adminUsers = UserDetail::whereIn('role', ['admin', 'floorman'])->with('user')->get();
 
         // Neue Statistiken
@@ -59,6 +59,11 @@ class AdminController extends Controller
     public function editUser(User $user)
     {
         return view('admin.users.edit', compact('user'));
+    }
+
+    public function showUser(User $user)
+    {
+        return view('admin.users.show', compact('user'));
     }
 
     public function updateUser(Request $request, User $user)

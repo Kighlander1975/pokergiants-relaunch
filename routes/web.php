@@ -45,6 +45,7 @@ Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboar
 // Admin routes
 Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
+    Route::get('/users/{user}', [App\Http\Controllers\AdminController::class, 'showUser'])->name('users.show');
     Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('users.edit');
     Route::patch('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');

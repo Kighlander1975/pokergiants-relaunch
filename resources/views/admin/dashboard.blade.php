@@ -243,7 +243,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->userDetail->role ?? 'player' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d.m.Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Bearbeiten</a>
+                                    <a href="{{ route('admin.users.show', $user) }}" class="text-indigo-600 hover:text-indigo-900">Anzeigen</a>
                                 </td>
                             </tr>
                             @endforeach
