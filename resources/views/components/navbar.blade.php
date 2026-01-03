@@ -39,7 +39,7 @@
                     @auth
                     @if(in_array(auth()->user()->userDetail->role ?? 'player', ['admin', 'floorman']))
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center sm:py-2" href="{{ route('dashboard') }}">
+                        <a class="nav-link d-flex align-items-center sm:py-2 min-h-[68px]" href="{{ route('dashboard') }}">
                             <span class="mso me-2">dashboard</span>
                             Dashboard
                         </a>

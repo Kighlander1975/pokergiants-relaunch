@@ -20,11 +20,11 @@
         </div>
     </main>
     <x-footer />
-
+    {{-- Debugging Banner 
     <div style="background: red; color: white; padding: 10px; position: fixed; top: 0; z-index: 9999;">
         Status: {{ Auth::check() ? 'Eingeloggt als ' . Auth::user()->email : 'Nicht eingeloggt' }}
     </div>
-
+    --}}
     @stack('scripts')
 </body>
 
