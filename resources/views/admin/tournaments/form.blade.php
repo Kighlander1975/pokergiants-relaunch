@@ -197,7 +197,34 @@ $tournament = $tournament ?? null;
             }
         }
 
+        const cleanupPriceRows = () => {
+            const inputs = Array.from(wrapper.querySelectorAll('input[name="prices[]"]'));
+            while (inputs.length > 1) {
+                const last = inputs[inputs.length - 1];
+                const secondLast = inputs[inputs.length - 2];
+                if (last.value.trim() === '' && secondLast.value.trim() === '') {
+                    const row = last.closest('.relative');
+                    if (row) {
+                        row.remove();
+                    } else {
+                        last.remove();
+                    }
+                    inputs.pop();
+                    const tracker = findTrackerForElement(secondLast);
+                    if (tracker) {
+                        tracker.check();
+                    }
+                    continue;
+                }
+                break;
+            }
+        };
+
         function onPriceInput(event) {
+            if (wrapper) {
+                cleanupPriceRows();
+            }
+
             const inputs = Array.from(wrapper.querySelectorAll('input[name="prices[]"]'));
             const last = inputs[inputs.length - 1];
             if (last && last.value.trim() !== '') {
