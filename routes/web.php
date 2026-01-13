@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\ProfileCompletionController;
 use App\Http\Controllers\CredentialsController;
+use App\Http\Controllers\TournamentPublicController;
+use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\TournamentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Support\AvatarTempCleanup;
@@ -42,6 +45,8 @@ Route::fallback(function () {
 Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])
     ->middleware(['auth', 'verified', 'check.role:admin,floorman'])->name('dashboard');
 
+Route::get('/turniere', [TournamentPublicController::class, 'index'])->name('tournaments.index');
+
 // Admin routes
 Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
@@ -51,6 +56,20 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('ad
     Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('users.edit');
     Route::patch('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+
+    Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+    Route::get('/locations/create', [LocationController::class, 'create'])->name('locations.create');
+    Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+    Route::get('/locations/{location}/edit', [LocationController::class, 'edit'])->name('locations.edit');
+    Route::patch('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
+    Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
+
+    Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments.index');
+    Route::get('/tournaments/create', [TournamentController::class, 'create'])->name('tournaments.create');
+    Route::post('/tournaments', [TournamentController::class, 'store'])->name('tournaments.store');
+    Route::get('/tournaments/{tournament}/edit', [TournamentController::class, 'edit'])->name('tournaments.edit');
+    Route::patch('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('tournaments.update');
+    Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
 });
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])

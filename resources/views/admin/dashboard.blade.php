@@ -13,7 +13,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <x-statistic-card bgColor="bg-blue-500" icon="users" label="Gesamt Benutzer" :value="$totalUsers" />
 
-            <x-statistic-card bgColor="bg-green-500" icon="user-shield" label="Aktive Administratoren" :value="$adminUsers->count()" />
+            <x-statistic-card bgColor="bg-green-500" icon="user-shield" label="Aktive Administratoren" :value="$adminUsersCount" />
 
             <x-statistic-card bgColor="bg-yellow-500" icon="chart-line" label="Neue Registrierungen" :value="$recentUsers->count()" />
 
@@ -32,6 +32,14 @@
             <x-statistic-card bgColor="bg-indigo-500" icon="file-alt" label="Benutzer mit Profil" :value="$usersWithProfile" />
 
             <x-statistic-card bgColor="bg-teal-500" icon="file" label="Benutzer ohne Profil" :value="$usersWithoutProfile" />
+
+            <x-statistic-card bgColor="bg-lime-500" icon="map-marked-alt" label="Anzahl Spielstätten" :value="$totalLocations" />
+
+            <x-statistic-card bgColor="bg-emerald-500" icon="map-pin" label="Aktive Spielstätten" :value="$activeLocations" />
+
+            <x-statistic-card bgColor="bg-cyan-500" icon="trophy" label="Alle Turniere" :value="$totalTournaments" />
+            <x-statistic-card bgColor="bg-indigo-500" icon="calendar-plus" label="Kommende Turniere" :value="$upcomingTournaments" />
+            <x-statistic-card bgColor="bg-purple-500" icon="calendar-check" label="Gespielte Turniere" :value="$playedTournaments" />
 
         </div>
 
@@ -134,22 +142,29 @@
             </div>
         </div>
 
-        <!-- Admin Users -->
+        <!-- Upcoming Tournaments -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Administratoren</h3>
-                <div class="space-y-2">
-                    @foreach($adminUsers as $admin)
-                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">{{ $admin->user->nickname }}</p>
-                            <p class="text-sm text-gray-500">{{ $admin->user->email }}</p>
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900">Kommende Turniere</h3>
+                    <a href="{{ route('admin.tournaments.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Alle Turniere</a>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse($upcomingTournamentList as $upcoming)
+                    <div class="border border-gray-200 rounded-lg p-4 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-900">{{ $upcoming->name }}</p>
+                            <span class="text-xs text-gray-500">{{ $upcoming->starts_at->format('d.m.Y H:i') }}</span>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            {{ $admin->role }}
-                        </span>
+                        <p class="text-sm text-gray-600">{{ $upcoming->location->name ?? 'Unbekannte Spielstätte' }}</p>
+                        <p class="text-xs text-gray-500">
+                            Anmeldung: <span class="font-semibold">{{ $upcoming->is_registration_open ? 'freigegeben' : 'geschlossen' }}</span>
+                        </p>
                     </div>
-                    @endforeach
+                    @empty
+                    <p class="text-sm text-gray-500">Keine kommenden Turniere verfügbar.</p>
+                    @endforelse
                 </div>
             </div>
         </div>

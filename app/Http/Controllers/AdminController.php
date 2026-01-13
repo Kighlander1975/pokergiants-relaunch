@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\NewUserCredentials;
+use App\Models\Location;
+use App\Models\Tournament;
 use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Http\Request;
@@ -16,8 +18,7 @@ class AdminController extends Controller
         $totalUsers = User::count();
         $perPage = $request->get('per_page', 5); // Default 5, kann 5, 10, 25, 50 sein
         $recentUsers = User::with('userDetail')->where('created_at', '>=', now()->subDays(14))->latest()->take($perPage)->get();
-        $adminUsers = UserDetail::whereIn('role', ['admin', 'floorman'])->with('user')->get();
-
+        $adminUsersCount = UserDetail::whereIn('role', ['admin', 'floorman'])->count();
         // Neue Statistiken
         $activeUsers24h = User::where('created_at', '>=', now()->subDay())->count();
         $inactiveUsers = User::where('created_at', '<', now()->subDays(30))->count();
@@ -29,11 +30,17 @@ class AdminController extends Controller
         $unverifiedEmails = $totalUsers - $verifiedEmails;
         $usersWithProfile = UserDetail::whereNotNull('firstname')->orWhereNotNull('lastname')->orWhereNotNull('city')->count();
         $usersWithoutProfile = $totalUsers - $usersWithProfile;
+        $totalTournaments = Tournament::count();
+        $upcomingTournaments = Tournament::upcoming()->count();
+        $playedTournaments = Tournament::played()->count();
+        $totalLocations = Location::count();
+        $activeLocations = Location::where('is_active', true)->count();
+        $upcomingTournamentList = Tournament::upcoming()->with('location')->orderBy('starts_at')->take(4)->get();
 
         return view('admin.dashboard', compact(
             'totalUsers',
             'recentUsers',
-            'adminUsers',
+            'adminUsersCount',
             'activeUsers24h',
             'inactiveUsers',
             'usersWithAvatars',
@@ -41,7 +48,13 @@ class AdminController extends Controller
             'verifiedEmails',
             'unverifiedEmails',
             'usersWithProfile',
-            'usersWithoutProfile'
+            'usersWithoutProfile',
+            'totalTournaments',
+            'upcomingTournaments',
+            'playedTournaments',
+            'totalLocations',
+            'activeLocations',
+            'upcomingTournamentList'
         ));
     }
 

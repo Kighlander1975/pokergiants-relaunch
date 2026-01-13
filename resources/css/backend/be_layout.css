@@ -11,6 +11,6 @@
     /* Add backend content styles */
 }
 
-.backend-body a[class*='bg-'][class*='px-'][class*='py-'] {
+.backend-body a[class*="bg-"][class*="px-"][class*="py-"] {
     text-decoration: none;
 }
