@@ -259,7 +259,15 @@ class AdminController extends Controller
 
     private function currentUserIsAdmin(): bool
     {
-        return optional(auth()->user()->userDetail)->role === 'admin';
+        /** @var \Illuminate\Contracts\Auth\Guard $guard */
+        $guard = auth();
+        $user = $guard->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return optional($user->userDetail)->role === 'admin';
     }
 
     private function ensureProfileFieldsPresent(Builder $detailQuery): void
