@@ -45,6 +45,27 @@ class TournamentController extends Controller
         return redirect()->route('admin.tournaments.index')->with('success', 'Turnier aktualisiert.');
     }
 
+    public function publish(Tournament $tournament)
+    {
+        if (! $tournament->is_published) {
+            $tournament->update(['is_published' => true]);
+        }
+
+        return back()->with('success', 'Turnier veröffentlicht.');
+    }
+
+    public function openRegistration(Tournament $tournament)
+    {
+        $updates = ['is_registration_open' => true];
+        if (! $tournament->is_published) {
+            $updates['is_published'] = true;
+        }
+
+        $tournament->update($updates);
+
+        return back()->with('success', 'Registrierung geöffnet.');
+    }
+
     public function destroy(Tournament $tournament)
     {
         $tournament->delete();

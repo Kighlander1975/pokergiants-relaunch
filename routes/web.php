@@ -70,6 +70,8 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::post('/tournaments', [TournamentController::class, 'store'])->name('tournaments.store');
     Route::get('/tournaments/{tournament}/edit', [TournamentController::class, 'edit'])->name('tournaments.edit');
     Route::patch('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('tournaments.update');
+    Route::patch('/tournaments/{tournament}/publish', [TournamentController::class, 'publish'])->name('tournaments.publish');
+    Route::patch('/tournaments/{tournament}/open-registration', [TournamentController::class, 'openRegistration'])->name('tournaments.open-registration');
     Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
 });
 

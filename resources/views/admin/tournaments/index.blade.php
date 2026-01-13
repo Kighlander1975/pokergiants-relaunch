@@ -40,7 +40,17 @@
                                         {{ $tournament->is_ranglistenturnier ? 'Rangliste' : 'Freies Turnier' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm font-medium space-x-2">
+                                <td class="px-6 py-4 text-sm font-medium space-x-2 flex flex-wrap gap-2">
+                                    <form method="POST" action="{{ route('admin.tournaments.publish', $tournament) }}" class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="text-emerald-600 hover:text-emerald-900 disabled:text-gray-400" {{ $tournament->is_published ? 'disabled' : '' }}>Veröffentlichen</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.tournaments.open-registration', $tournament) }}" class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="text-cyan-600 hover:text-cyan-900 disabled:text-gray-400" {{ $tournament->is_registration_open ? 'disabled' : '' }}>Registrierung öffnen</button>
+                                    </form>
                                     <a href="{{ route('admin.tournaments.edit', $tournament) }}" class="text-indigo-600 hover:text-indigo-900">Bearbeiten</a>
                                     <form method="POST" action="{{ route('admin.tournaments.destroy', $tournament) }}" class="inline" onsubmit="return confirm('Turnier wirklich archivieren?');">
                                         @csrf
