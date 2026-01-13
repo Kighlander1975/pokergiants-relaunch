@@ -35,15 +35,15 @@ $tournament = $tournament ?? null;
         <p class="text-xs text-gray-500 mb-2">Fülle die Plätze ohne Lücken auf – es erscheint automatisch ein neues Feld.</p>
         <div id="prices-wrapper" class="space-y-2">
             @php
-                $priceEntries = old('prices', $tournament->prices ?? []);
-                if (count($priceEntries) === 0) {
-                    $priceEntries = [''];
-                }
-                $lastPrice = trim((string) end($priceEntries));
-                if ($lastPrice !== '') {
-                    $priceEntries[] = '';
-                }
-                reset($priceEntries);
+            $priceEntries = old('prices', $tournament->prices ?? []);
+            if (count($priceEntries) === 0) {
+            $priceEntries = [''];
+            }
+            $lastPrice = trim((string) end($priceEntries));
+            if ($lastPrice !== '') {
+            $priceEntries[] = '';
+            }
+            reset($priceEntries);
             @endphp
             @foreach($priceEntries as $index => $value)
             <div class="relative">

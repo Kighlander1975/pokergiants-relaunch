@@ -26,6 +26,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Typ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
                             </tr>
                         </thead>
@@ -39,6 +40,16 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $tournament->is_ranglistenturnier ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                         {{ $tournament->is_ranglistenturnier ? 'Rangliste' : 'Freies Turnier' }}
                                     </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $tournament->is_published ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ $tournament->is_published ? 'Veröffentlicht' : 'Nicht veröffentlicht' }}
+                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $tournament->is_registration_open ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ $tournament->is_registration_open ? 'Registrierung geöffnet' : 'Registrierung geschlossen' }}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium space-y-2">
                                     <div class="grid grid-cols-2 gap-2">
