@@ -50,6 +50,10 @@ class AdminController extends Controller
             ->orderBy('starts_at')
             ->take(4)
             ->get();
+        $visibleTournaments = Tournament::with('location')
+            ->where('starts_at', '>=', now()->subDay())
+            ->orderBy('starts_at')
+            ->get();
 
         return view('admin.dashboard', compact(
             'totalUsers',
@@ -68,7 +72,8 @@ class AdminController extends Controller
             'playedTournaments',
             'totalLocations',
             'activeLocations',
-            'upcomingTournamentList'
+            'upcomingTournamentList',
+            'visibleTournaments'
         ));
     }
 

@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <!-- Upcoming Tournaments -->
+        <!-- Upcoming Tournaments Table -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 space-y-4">
                 <div class="flex items-center justify-between">
@@ -152,37 +152,75 @@
                     <a href="{{ route('admin.tournaments.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Alle Turniere</a>
                 </div>
 
-                <div class="space-y-3">
-                    @forelse($upcomingTournamentList as $upcoming)
-                    <div class="border border-gray-200 rounded-lg p-4 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900">{{ $upcoming->name }}</p>
-                            <span class="text-xs text-gray-500">{{ $upcoming->starts_at->format('d.m.Y H:i') }}</span>
-                        </div>
-                        <p class="text-sm text-gray-600">{{ $upcoming->location->name ?? 'Unbekannte Spielstätte' }}</p>
-                        <p class="text-xs text-gray-500">
-                            Anmeldung: <span class="font-semibold">{{ $upcoming->is_registration_open ? 'freigegeben' : 'geschlossen' }}</span>
-                        </p>
-                        <div class="grid grid-cols-2 gap-2 pt-3">
-                            <form method="POST" action="{{ route('admin.tournaments.publish', $upcoming) }}" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-emerald-600 hover:bg-emerald-50" {{ $upcoming->is_published ? 'disabled' : '' }}>
-                                    Veröffentlichen
-                                </button>
-                            </form>
-                            <form method="POST" action="{{ route('admin.tournaments.open-registration', $upcoming) }}" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-cyan-600 hover:bg-cyan-50" {{ $upcoming->is_registration_open ? 'disabled' : '' }}>
-                                    Registrierung öffnen
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    @empty
-                    <p class="text-sm text-gray-500">Keine kommenden Turniere verfügbar.</p>
-                    @endforelse
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($visibleTournaments as $tournament)
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $tournament->name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $tournament->location->name ?? '–' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $tournament->starts_at->format('d.m.Y H:i') }}</td>
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $tournament->is_published ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ $tournament->is_published ? 'Veröffentlicht' : 'Nicht veröffentlicht' }}
+                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $tournament->is_registration_open ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ $tournament->is_registration_open ? 'Registrierung geöffnet' : 'Registrierung geschlossen' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm space-y-2">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <form method="POST" action="{{ route('admin.tournaments.publish', $tournament) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-emerald-600 hover:bg-emerald-50" {{ $tournament->is_published ? 'disabled' : '' }}>
+                                                Veröffentlichen
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.tournaments.unpublish', $tournament) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-gray-600 hover:bg-gray-50" {{ $tournament->is_published ? '' : 'disabled' }}>
+                                                Unveröffentlichen
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <form method="POST" action="{{ route('admin.tournaments.open-registration', $tournament) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-cyan-600 hover:bg-cyan-50" {{ $tournament->is_registration_open ? 'disabled' : '' }}>
+                                                Registrierung öffnen
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.tournaments.close-registration', $tournament) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-gray-600 hover:bg-gray-50" {{ $tournament->is_registration_open ? '' : 'disabled' }}>
+                                                Registrierung schließen
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-sm text-gray-500">Keine Turniere in diesem Zeitraum.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
