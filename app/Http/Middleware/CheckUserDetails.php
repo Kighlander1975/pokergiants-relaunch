@@ -52,22 +52,8 @@ class CheckUserDetails
 
         // Check required fields
         $userDetail = $user->userDetail;
-        if (!$userDetail) {
-            session([$cacheKey => false]);
-            return false;
-        }
+        $isComplete = $userDetail ? $userDetail->isProfileComplete() : false;
 
-        $requiredFields = ['firstname', 'lastname', 'street_number', 'zip', 'city', 'dob'];
-        $isComplete = true;
-
-        foreach ($requiredFields as $field) {
-            if (empty($userDetail->$field)) {
-                $isComplete = false;
-                break;
-            }
-        }
-
-        // Cache the result
         session([$cacheKey => $isComplete]);
         return $isComplete;
     }

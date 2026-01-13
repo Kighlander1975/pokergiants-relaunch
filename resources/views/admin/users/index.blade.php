@@ -97,6 +97,17 @@
                                 <span>Nicht verifiziert</span>
                             </label>
                         </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Profil vollständig</span>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_profile" data-filter-type="status" data-status-group="profile" value="profile_complete" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('profile_complete', $statusFilters) ? 'checked' : '' }}>
+                                <span>Ja</span>
+                            </label>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_profile" data-filter-type="status" data-status-group="profile" value="profile_incomplete" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('profile_incomplete', $statusFilters) ? 'checked' : '' }}>
+                                <span>Nein</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -116,10 +127,10 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spitzname</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-Mail</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rolle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profil vollständig</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zuletzt Online</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registriert</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
@@ -130,6 +141,7 @@
                         @php
                         $userRole = optional($user->userDetail)->role ?? 'player';
                         $hasAvatar = optional($user->userDetail)->getFirstMedia('avatar');
+                        $profileComplete = optional($user->userDetail)->isProfileComplete() ?? false;
                         @endphp
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -153,7 +165,6 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user->nickname }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -164,14 +175,23 @@
                                     {{ $userRole === 'admin' ? 'Administrator' : ($userRole === 'floorman' ? 'Floorman' : 'Spieler') }}
                                 </span>
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $profileComplete ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $profileComplete ? 'Ja' : 'Nein' }}
+                                </span>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->last_online_label }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ optional($user->created_at)->format('d.m.Y H:i') ?? '—' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Bearbeiten</a>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-3">
+                                <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900" aria-label="Benutzer bearbeiten">
+                                    <x-icon name="edit" class="w-5 h-5" />
+                                </a>
                                 <form method="POST" action="{{ route('admin.users.delete', $user) }}" class="inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900">Löschen</button>
+                                    <button type="submit" class="text-red-600 hover:text-red-900" aria-label="Benutzer löschen">
+                                        <x-icon name="trash" class="w-5 h-5" />
+                                    </button>
                                 </form>
                             </td>
                         </tr>

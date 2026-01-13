@@ -7,6 +7,7 @@ use App\Models\Location;
 use App\Models\Tournament;
 use App\Models\User;
 use App\Models\UserDetail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -15,6 +16,7 @@ use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
+    private const PROFILE_REQUIRED_FIELDS = ['firstname', 'lastname', 'street_number', 'zip', 'city', 'dob'];
     public function dashboard(Request $request)
     {
         $recentUsersPerPage = max(1, min((int) $request->query('per_page', 5), 50));
@@ -34,12 +36,8 @@ class AdminController extends Controller
         $usersWithoutAvatars = max(0, $totalUsers - $usersWithAvatars);
         $verifiedEmails = User::whereNotNull('email_verified_at')->count();
         $unverifiedEmails = max(0, $totalUsers - $verifiedEmails);
-        $usersWithProfile = UserDetail::where(function ($query) {
-            $query->whereNotNull('firstname')
-                ->orWhereNotNull('lastname')
-                ->orWhereNotNull('country')
-                ->orWhereNotNull('city')
-                ->orWhereNotNull('bio');
+        $usersWithProfile = UserDetail::where(function (Builder $query) {
+            $this->ensureProfileFieldsPresent($query);
         })->count();
         $usersWithoutProfile = max(0, $totalUsers - $usersWithProfile);
         $totalTournaments = Tournament::count();
@@ -77,7 +75,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $allowedRoles = ['player', 'floorman', 'admin'];
-        $allowedStatuses = ['avatar', 'no_avatar', 'active', 'inactive', 'verified', 'unverified', 'online'];
+        $allowedStatuses = ['avatar', 'no_avatar', 'active', 'inactive', 'verified', 'unverified', 'online', 'profile_complete', 'profile_incomplete'];
         $perPage = (int) $request->query('per_page', 5);
 
         $requestedRoles = collect($request->query('roles', []))
@@ -127,6 +125,19 @@ class AdminController extends Controller
             ->when(in_array('online', $requestedStatuses, true), function ($query) {
                 $query->whereNotNull('last_online_at')
                     ->where('last_online_at', '>=', now()->subMinutes(5));
+            })
+            ->when(in_array('profile_complete', $requestedStatuses, true), function ($query) {
+                $query->whereHas('userDetail', function (Builder $detailQuery) {
+                    $this->ensureProfileFieldsPresent($detailQuery);
+                });
+            })
+            ->when(in_array('profile_incomplete', $requestedStatuses, true), function ($query) {
+                $query->where(function ($query) {
+                    $query->whereDoesntHave('userDetail')
+                        ->orWhereHas('userDetail', function (Builder $detailQuery) {
+                            $this->ensureProfileFieldMissing($detailQuery);
+                        });
+                });
             });
 
         $users = $usersQuery->paginate(max($perPage, 1))->withQueryString();
@@ -244,6 +255,40 @@ class AdminController extends Controller
     private function currentUserIsAdmin(): bool
     {
         return optional(auth()->user()->userDetail)->role === 'admin';
+    }
+
+    private function ensureProfileFieldsPresent(Builder $detailQuery): void
+    {
+        foreach (self::PROFILE_REQUIRED_FIELDS as $field) {
+            if ($field === 'dob') {
+                $detailQuery->whereNotNull($field);
+            } else {
+                $detailQuery->whereNotNull($field)->where($field, '!=', '');
+            }
+        }
+    }
+
+    private function ensureProfileFieldMissing(Builder $fieldQuery): void
+    {
+        $fieldQuery->where(function (Builder $query) {
+            $firstConstraint = true;
+
+            foreach (self::PROFILE_REQUIRED_FIELDS as $field) {
+                $constraint = function (Builder $builder) use ($field) {
+                    $builder->whereNull($field);
+                    if ($field !== 'dob') {
+                        $builder->orWhere($field, '');
+                    }
+                };
+
+                if ($firstConstraint) {
+                    $query->where($constraint);
+                    $firstConstraint = false;
+                } else {
+                    $query->orWhere($constraint);
+                }
+            }
+        });
     }
 
     private function generateRandomPassword(int $length = 10): string

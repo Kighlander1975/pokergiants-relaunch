@@ -77,6 +77,26 @@ class UserDetail extends Model implements HasMedia
             ->nonQueued();
     }
 
+    public function isProfileComplete(): bool
+    {
+        $required = ['firstname', 'lastname', 'street_number', 'zip', 'city', 'dob'];
+
+        foreach ($required as $field) {
+            if ($field === 'dob') {
+                if (is_null($this->$field)) {
+                    return false;
+                }
+                continue;
+            }
+
+            if (empty($this->$field)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Hilfsmethode: Avatar-URL abrufen
      */

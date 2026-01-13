@@ -80,7 +80,7 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('admin-user-form');
         const submitButton = document.getElementById('update-user-button');
 

@@ -15,10 +15,6 @@
 
             <x-statistic-card href="{{ route('admin.users', ['roles' => ['admin'], 'statuses' => ['active']]) }}" borderColor="#22C55E" bgColor="bg-green-500" icon="user-shield" label="Aktive Administratoren" :value="$adminUsersCount" />
 
-            <x-statistic-card bgColor="bg-yellow-500" icon="chart-line" label="Neue Registrierungen" :value="$recentUsers->count()" />
-
-            <x-statistic-card bgColor="bg-green-500" icon="bolt" label="Aktive Registrierungen (24h)" :value="$activeUsers24h" />
-
             <x-statistic-card href="{{ route('admin.users', ['statuses' => ['inactive']]) }}" borderColor="#6B7280" bgColor="bg-gray-500" icon="shield-alt" label="Inaktive Benutzer (30+ Tage)" :value="$inactiveUsers" />
 
             <x-statistic-card href="{{ route('admin.users', ['statuses' => ['avatar']]) }}" borderColor="#A855F7" bgColor="bg-purple-500" icon="user-circle" label="Benutzer mit Avatar" :value="$usersWithAvatars" />
@@ -29,9 +25,9 @@
 
             <x-statistic-card href="{{ route('admin.users', ['statuses' => ['unverified']]) }}" borderColor="#EF4444" bgColor="bg-red-500" icon="envelope-open" label="Nicht verifizierte E-Mails" :value="$unverifiedEmails" />
 
-            <x-statistic-card bgColor="bg-indigo-500" icon="file-alt" label="Benutzer mit Profil" :value="$usersWithProfile" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['profile_complete']]) }}" borderColor="#4F46E5" bgColor="bg-indigo-500" icon="file-alt" label="Benutzer mit Profil" :value="$usersWithProfile" />
 
-            <x-statistic-card bgColor="bg-teal-500" icon="file" label="Benutzer ohne Profil" :value="$usersWithoutProfile" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['profile_incomplete']]) }}" borderColor="#0F766E" bgColor="bg-teal-500" icon="file" label="Benutzer ohne Profil" :value="$usersWithoutProfile" />
 
             <x-statistic-card href="{{ route('admin.locations.index') }}" borderColor="#84CC16" bgColor="bg-lime-500" icon="map-marked-alt" label="Anzahl Spielstätten" :value="$totalLocations" />
 
