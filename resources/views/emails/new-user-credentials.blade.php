@@ -12,14 +12,14 @@
 
         <p>Hallo {{ $user->nickname }},</p>
 
-        <p>Ein Administrator hat für dich einen Account angelegt. Du kannst dich ab sofort mit folgenden Zugangsdaten anmelden:</p>
+        <p>Ein Administrator hat deine Zugangsdaten aktualisiert. Du kannst dich ab sofort mit folgenden Zugangsdaten anmelden:</p>
 
         <ul style="list-style: none; padding: 0;">
             <li><strong>E-Mail:</strong> {{ $user->email }}</li>
             <li><strong>Passwort:</strong> {{ $password }}</li>
         </ul>
 
-        <p>Der Zugang ist bereits verifiziert. Bitte melde dich unter folgendem Link an und ändere das Passwort nach dem ersten Login:</p>
+        <p>Der Zugang ist bereits verifiziert. Bitte melde dich unter folgendem Link an und ändere das Passwort nach dem Login:</p>
 
         <div style="text-align: center; margin: 30px 0;">
             <a href="{{ $loginUrl }}" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">

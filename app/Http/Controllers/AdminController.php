@@ -10,6 +10,8 @@ use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -155,11 +157,6 @@ class AdminController extends Controller
             'nickname' => 'required|string|max:255|unique:users,nickname,' . $user->id,
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:player,floorman,admin',
-            'firstname' => 'nullable|string|max:255',
-            'lastname' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:2',
-            'city' => 'nullable|string|max:255',
-            'bio' => 'nullable|string|max:1000',
         ]);
 
         $user->update([
@@ -167,16 +164,33 @@ class AdminController extends Controller
             'email' => $request->email,
         ]);
 
-        $user->userDetail->update([
-            'role' => $request->role,
-            'firstname' => $request->firstname,
-            'lastname' => $request->lastname,
-            'country' => $request->country,
-            'city' => $request->city,
-            'bio' => $request->bio,
-        ]);
+        $detail = $user->userDetail;
+
+        if ($detail) {
+            $detail->update(['role' => $request->role]);
+        } else {
+            $user->userDetail()->create(['role' => $request->role]);
+        }
 
         return redirect()->route('admin.users')->with('success', 'Benutzer erfolgreich aktualisiert.');
+    }
+
+    public function resetUserPassword(User $user)
+    {
+        $this->ensureAdmin();
+
+        $password = $this->generateRandomPassword();
+
+        $user->update([
+            'password' => Hash::make($password),
+            'remember_token' => Str::random(60),
+        ]);
+
+        DB::table(config('session.table'))->where('user_id', $user->id)->delete();
+
+        Mail::to($user->email)->send(new NewUserCredentials($user, $password));
+
+        return redirect()->route('admin.users.edit', $user)->with('success', 'Neues Passwort vergeben und Benutzer per E-Mail informiert.');
     }
 
     public function deleteUser(User $user)

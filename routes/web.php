@@ -55,6 +55,7 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::get('/users/{user}', [App\Http\Controllers\AdminController::class, 'showUser'])->name('users.show');
     Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('users.edit');
     Route::patch('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
+    Route::post('/users/{user}/password', [App\Http\Controllers\AdminController::class, 'resetUserPassword'])->name('users.reset-password');
     Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
 
     Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
