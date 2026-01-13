@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class NewsController extends Controller
 {
@@ -111,9 +112,9 @@ class NewsController extends Controller
             ]);
 
             if (empty($validated['source_text']) && empty($validated['source_url'])) {
-                \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'source_text' => 'Für externe News muss bitte mindestens eine Quelle angegeben werden.',
-                ])->throw();
+                ]);
             }
         }
 

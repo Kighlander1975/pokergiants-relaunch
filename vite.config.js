@@ -8,6 +8,7 @@ export default defineConfig({
                 "resources/css/app.css",
                 "resources/js/app.js",
                 "resources/js/admin/users-filters.js",
+                "resources/js/admin/news-editor.js",
             ],
             refresh: true,
         }),
