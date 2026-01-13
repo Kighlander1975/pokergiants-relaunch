@@ -75,7 +75,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $allowedRoles = ['player', 'floorman', 'admin'];
-        $allowedStatuses = ['avatar', 'active', 'verified'];
+        $allowedStatuses = ['avatar', 'no_avatar', 'active', 'inactive', 'verified', 'unverified'];
         $perPage = (int) $request->query('per_page', 5);
 
         $requestedRoles = collect($request->query('roles', []))
@@ -105,11 +105,22 @@ class AdminController extends Controller
                     });
                 });
             })
+            ->when(in_array('no_avatar', $requestedStatuses, true), function ($query) {
+                $query->whereDoesntHave('userDetail.media', function ($mediaQuery) {
+                    $mediaQuery->where('collection_name', 'avatar');
+                });
+            })
             ->when(in_array('active', $requestedStatuses, true), function ($query) {
                 $query->where('updated_at', '>=', now()->subDays(30));
             })
+            ->when(in_array('inactive', $requestedStatuses, true), function ($query) {
+                $query->where('updated_at', '<', now()->subDays(30));
+            })
             ->when(in_array('verified', $requestedStatuses, true), function ($query) {
                 $query->whereNotNull('email_verified_at');
+            })
+            ->when(in_array('unverified', $requestedStatuses, true), function ($query) {
+                $query->whereNull('email_verified_at');
             });
 
         $users = $usersQuery->paginate(max($perPage, 1))->withQueryString();

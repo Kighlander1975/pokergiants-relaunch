@@ -40,30 +40,57 @@
                         Alle Benutzer
                     </button>
                     <div class="flex flex-wrap gap-3 items-center">
-                        <label class="inline-flex items-center gap-1 text-sm text-gray-700">
-                            <input type="checkbox" data-filter-type="role" value="player" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('player', $roleFilters) ? 'checked' : '' }}>
-                            <span>Alle Spieler</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1 text-sm text-gray-700">
-                            <input type="checkbox" data-filter-type="role" value="floorman" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('floorman', $roleFilters) ? 'checked' : '' }}>
-                            <span>Alle Floormans</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1 text-sm text-gray-700">
-                            <input type="checkbox" data-filter-type="role" value="admin" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('admin', $roleFilters) ? 'checked' : '' }}>
-                            <span>Alle Admins</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1 text-sm text-gray-700">
-                            <input type="checkbox" data-filter-type="status" value="avatar" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('avatar', $statusFilters) ? 'checked' : '' }}>
-                            <span>Mit Avatar</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1 text-sm text-gray-700">
-                            <input type="checkbox" data-filter-type="status" value="active" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('active', $statusFilters) ? 'checked' : '' }}>
-                            <span>Aktiv (30 Tage)</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1 text-sm text-gray-700">
-                            <input type="checkbox" data-filter-type="status" value="verified" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('verified', $statusFilters) ? 'checked' : '' }}>
-                            <span>Verifizierte Nutzer</span>
-                        </label>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <label class="inline-flex items-center gap-1">
+                                <input type="checkbox" data-filter-type="role" value="player" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('player', $roleFilters) ? 'checked' : '' }}>
+                                <span>Alle Spieler</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <label class="inline-flex items-center gap-1">
+                                <input type="checkbox" data-filter-type="role" value="floorman" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('floorman', $roleFilters) ? 'checked' : '' }}>
+                                <span>Alle Floormans</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <label class="inline-flex items-center gap-1">
+                                <input type="checkbox" data-filter-type="role" value="admin" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('admin', $roleFilters) ? 'checked' : '' }}>
+                                <span>Alle Admins</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Avatar</span>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_avatar" data-filter-type="status" data-status-group="avatar" value="avatar" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('avatar', $statusFilters) ? 'checked' : '' }}>
+                                <span>Mit Avatar</span>
+                            </label>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_avatar" data-filter-type="status" data-status-group="avatar" value="no_avatar" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('no_avatar', $statusFilters) ? 'checked' : '' }}>
+                                <span>Ohne Avatar</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Aktivität</span>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_activity" data-filter-type="status" data-status-group="activity" value="active" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('active', $statusFilters) ? 'checked' : '' }}>
+                                <span>Aktiv (30 Tage)</span>
+                            </label>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_activity" data-filter-type="status" data-status-group="activity" value="inactive" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('inactive', $statusFilters) ? 'checked' : '' }}>
+                                <span>Inaktiv (31+ Tage)</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Verifikation</span>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_verification" data-filter-type="status" data-status-group="verification" value="verified" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('verified', $statusFilters) ? 'checked' : '' }}>
+                                <span>Verifiziert</span>
+                            </label>
+                            <label class="inline-flex items-center gap-1">
+                                <input type="radio" name="status_verification" data-filter-type="status" data-status-group="verification" value="unverified" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('unverified', $statusFilters) ? 'checked' : '' }}>
+                                <span>Nicht verifiziert</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -243,6 +270,28 @@
             activeClasses.forEach((className) => resetFiltersButton.classList.toggle(className, isActive));
             inactiveClasses.forEach((className) => resetFiltersButton.classList.toggle(className, !isActive));
         }
+
+        function setupStatusRadios() {
+            const statusRadios = document.querySelectorAll('input[type="radio"][data-status-group]');
+
+            statusRadios.forEach((radio) => {
+                radio.addEventListener('pointerdown', () => {
+                    radio.dataset.wasChecked = radio.checked ? 'true' : 'false';
+                });
+
+                radio.addEventListener('click', (event) => {
+                    if (radio.dataset.wasChecked === 'true') {
+                        event.preventDefault();
+                        radio.checked = false;
+                        radio.dispatchEvent(new Event('change', {
+                            bubbles: true
+                        }));
+                    }
+                });
+            });
+        }
+
+        setupStatusRadios();
 
         filterInputs.forEach((input) => {
             input.addEventListener('change', () => {
