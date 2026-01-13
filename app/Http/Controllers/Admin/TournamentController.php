@@ -66,6 +66,24 @@ class TournamentController extends Controller
         return back()->with('success', 'Registrierung geöffnet.');
     }
 
+    public function unpublish(Tournament $tournament)
+    {
+        if ($tournament->is_published) {
+            $tournament->update(['is_published' => false, 'is_registration_open' => false]);
+        }
+
+        return back()->with('success', 'Turnier wieder unveröffentlicht.');
+    }
+
+    public function closeRegistration(Tournament $tournament)
+    {
+        if ($tournament->is_registration_open) {
+            $tournament->update(['is_registration_open' => false]);
+        }
+
+        return back()->with('success', 'Registrierung geschlossen.');
+    }
+
     public function destroy(Tournament $tournament)
     {
         $tournament->delete();

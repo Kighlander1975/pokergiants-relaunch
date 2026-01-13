@@ -40,23 +40,47 @@
                                         {{ $tournament->is_ranglistenturnier ? 'Rangliste' : 'Freies Turnier' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm font-medium space-x-2 flex flex-wrap gap-2">
-                                    <form method="POST" action="{{ route('admin.tournaments.publish', $tournament) }}" class="inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="text-emerald-600 hover:text-emerald-900 disabled:text-gray-400" {{ $tournament->is_published ? 'disabled' : '' }}>Veröffentlichen</button>
-                                    </form>
-                                    <form method="POST" action="{{ route('admin.tournaments.open-registration', $tournament) }}" class="inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="text-cyan-600 hover:text-cyan-900 disabled:text-gray-400" {{ $tournament->is_registration_open ? 'disabled' : '' }}>Registrierung öffnen</button>
-                                    </form>
-                                    <a href="{{ route('admin.tournaments.edit', $tournament) }}" class="text-indigo-600 hover:text-indigo-900">Bearbeiten</a>
-                                    <form method="POST" action="{{ route('admin.tournaments.destroy', $tournament) }}" class="inline" onsubmit="return confirm('Turnier wirklich archivieren?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Archivieren</button>
-                                    </form>
+                                <td class="px-6 py-4 text-sm font-medium space-y-2">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <form method="POST" action="{{ route('admin.tournaments.publish', $tournament) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md border transition-colors duration-150 focus:outline-none" {{ $tournament->is_published ? 'disabled' : '' }}>
+                                                Veröffentlichen
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.tournaments.unpublish', $tournament) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md border transition-colors duration-150 focus:outline-none" {{ $tournament->is_published ? '' : 'disabled' }}>
+                                                Unveröffentlichen
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <form method="POST" action="{{ route('admin.tournaments.open-registration', $tournament) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md border transition-colors duration-150 focus:outline-none" {{ $tournament->is_registration_open ? 'disabled' : '' }}>
+                                                Registrierung öffnen
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.tournaments.close-registration', $tournament) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="w-full text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md border transition-colors duration-150 focus:outline-none" {{ $tournament->is_registration_open ? '' : 'disabled' }}>
+                                                Registrierung schließen
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <a href="{{ route('admin.tournaments.edit', $tournament) }}" class="w-full inline-flex items-center justify-center px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md border border-gray-200 text-indigo-600 hover:bg-gray-50">Bearbeiten</a>
+                                        <form method="POST" action="{{ route('admin.tournaments.destroy', $tournament) }}" class="inline" onsubmit="return confirm('Turnier wirklich archivieren?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="w-full text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md border border-gray-200 text-red-600 hover:bg-gray-50">Archivieren</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach

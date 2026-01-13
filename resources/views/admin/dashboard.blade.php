@@ -163,6 +163,22 @@
                         <p class="text-xs text-gray-500">
                             Anmeldung: <span class="font-semibold">{{ $upcoming->is_registration_open ? 'freigegeben' : 'geschlossen' }}</span>
                         </p>
+                        <div class="grid grid-cols-2 gap-2 pt-3">
+                            <form method="POST" action="{{ route('admin.tournaments.publish', $upcoming) }}" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-emerald-600 hover:bg-emerald-50" {{ $upcoming->is_published ? 'disabled' : '' }}>
+                                    Veröffentlichen
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.tournaments.open-registration', $upcoming) }}" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="w-full text-xs font-semibold uppercase tracking-wide rounded-md border text-cyan-600 hover:bg-cyan-50" {{ $upcoming->is_registration_open ? 'disabled' : '' }}>
+                                    Registrierung öffnen
+                                </button>
+                            </form>
+                        </div>
                     </div>
                     @empty
                     <p class="text-sm text-gray-500">Keine kommenden Turniere verfügbar.</p>

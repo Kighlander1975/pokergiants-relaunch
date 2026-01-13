@@ -71,7 +71,9 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::get('/tournaments/{tournament}/edit', [TournamentController::class, 'edit'])->name('tournaments.edit');
     Route::patch('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('tournaments.update');
     Route::patch('/tournaments/{tournament}/publish', [TournamentController::class, 'publish'])->name('tournaments.publish');
+    Route::patch('/tournaments/{tournament}/unpublish', [TournamentController::class, 'unpublish'])->name('tournaments.unpublish');
     Route::patch('/tournaments/{tournament}/open-registration', [TournamentController::class, 'openRegistration'])->name('tournaments.open-registration');
+    Route::patch('/tournaments/{tournament}/close-registration', [TournamentController::class, 'closeRegistration'])->name('tournaments.close-registration');
     Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
 });
 
