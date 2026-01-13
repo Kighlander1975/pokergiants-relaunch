@@ -8,10 +8,13 @@ use App\Http\Controllers\ProfileCompletionController;
 use App\Http\Controllers\CredentialsController;
 use App\Http\Controllers\TournamentPublicController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\NewsCommentController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\TournamentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Support\AvatarTempCleanup;
+use App\Http\Controllers\NewsPublicController;
 
 Route::get('/', function () {
     return view('layouts.frontend.pages.home');
@@ -46,6 +49,8 @@ Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboar
     ->middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.activity'])->name('dashboard');
 
 Route::get('/turniere', [TournamentPublicController::class, 'index'])->name('tournaments.index');
+Route::get('/news', [NewsPublicController::class, 'index'])->name('news.index');
+Route::get('/news/{news}/{slug?}', [NewsPublicController::class, 'show'])->name('news.show');
 
 // Admin routes
 Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.activity'])->prefix('admin')->name('admin.')->group(function () {
@@ -75,6 +80,14 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::patch('/tournaments/{tournament}/open-registration', [TournamentController::class, 'openRegistration'])->name('tournaments.open-registration');
     Route::patch('/tournaments/{tournament}/close-registration', [TournamentController::class, 'closeRegistration'])->name('tournaments.close-registration');
     Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
+
+    Route::resource('news', NewsController::class)->except(['show']);
+    Route::patch('/news/{news}/publish', [NewsController::class, 'publish'])->name('news.publish');
+    Route::patch('/news/{news}/unpublish', [NewsController::class, 'unpublish'])->name('news.unpublish');
+
+    Route::get('/news/{news}/comments', [NewsCommentController::class, 'index'])->name('news.comments.index');
+    Route::patch('/news/{news}/comments/{comment}/approve', [NewsCommentController::class, 'approve'])->name('news.comments.approve');
+    Route::patch('/news/{news}/comments/{comment}/reject', [NewsCommentController::class, 'reject'])->name('news.comments.reject');
 });
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])
