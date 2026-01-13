@@ -253,7 +253,7 @@ $faIconOptions = getAvailableFontAwesomeIconOptions();
             </button>
         </div>
     </div>
-    </div>
+</div>
 </div>
 
 @php
