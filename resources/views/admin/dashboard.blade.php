@@ -11,35 +11,35 @@
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <x-statistic-card bgColor="bg-blue-500" icon="users" label="Gesamt Benutzer" :value="$totalUsers" />
+            <x-statistic-card href="{{ route('admin.users') }}" borderColor="#3B82F6" bgColor="bg-blue-500" icon="users" label="Gesamt Benutzer" :value="$totalUsers" />
 
-            <x-statistic-card bgColor="bg-green-500" icon="user-shield" label="Aktive Administratoren" :value="$adminUsersCount" />
+            <x-statistic-card href="{{ route('admin.users', ['roles' => ['admin'], 'statuses' => ['active']]) }}" borderColor="#22C55E" bgColor="bg-green-500" icon="user-shield" label="Aktive Administratoren" :value="$adminUsersCount" />
 
             <x-statistic-card bgColor="bg-yellow-500" icon="chart-line" label="Neue Registrierungen" :value="$recentUsers->count()" />
 
             <x-statistic-card bgColor="bg-green-500" icon="bolt" label="Aktive Registrierungen (24h)" :value="$activeUsers24h" />
 
-            <x-statistic-card bgColor="bg-gray-500" icon="shield-alt" label="Inaktive Benutzer (30+ Tage)" :value="$inactiveUsers" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['inactive']]) }}" borderColor="#6B7280" bgColor="bg-gray-500" icon="shield-alt" label="Inaktive Benutzer (30+ Tage)" :value="$inactiveUsers" />
 
-            <x-statistic-card bgColor="bg-purple-500" icon="user-circle" label="Benutzer mit Avatar" :value="$usersWithAvatars" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['avatar']]) }}" borderColor="#A855F7" bgColor="bg-purple-500" icon="user-circle" label="Benutzer mit Avatar" :value="$usersWithAvatars" />
 
-            <x-statistic-card bgColor="bg-orange-500" icon="user" label="Benutzer ohne Avatar" :value="$usersWithoutAvatars" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['no_avatar']]) }}" borderColor="#F97316" bgColor="bg-orange-500" icon="user" label="Benutzer ohne Avatar" :value="$usersWithoutAvatars" />
 
-            <x-statistic-card bgColor="bg-blue-500" icon="envelope" label="Verifizierte E-Mails" :value="$verifiedEmails" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['verified']]) }}" borderColor="#3B82F6" bgColor="bg-blue-500" icon="envelope" label="Verifizierte E-Mails" :value="$verifiedEmails" />
 
-            <x-statistic-card bgColor="bg-red-500" icon="envelope-open" label="Nicht verifizierte E-Mails" :value="$unverifiedEmails" />
+            <x-statistic-card href="{{ route('admin.users', ['statuses' => ['unverified']]) }}" borderColor="#EF4444" bgColor="bg-red-500" icon="envelope-open" label="Nicht verifizierte E-Mails" :value="$unverifiedEmails" />
 
             <x-statistic-card bgColor="bg-indigo-500" icon="file-alt" label="Benutzer mit Profil" :value="$usersWithProfile" />
 
             <x-statistic-card bgColor="bg-teal-500" icon="file" label="Benutzer ohne Profil" :value="$usersWithoutProfile" />
 
-            <x-statistic-card bgColor="bg-lime-500" icon="map-marked-alt" label="Anzahl Spielstätten" :value="$totalLocations" />
+            <x-statistic-card href="{{ route('admin.locations.index') }}" borderColor="#84CC16" bgColor="bg-lime-500" icon="map-marked-alt" label="Anzahl Spielstätten" :value="$totalLocations" />
 
-            <x-statistic-card bgColor="bg-emerald-500" icon="map-pin" label="Aktive Spielstätten" :value="$activeLocations" />
+            <x-statistic-card href="{{ route('admin.locations.index') }}" borderColor="#10B981" bgColor="bg-emerald-500" icon="map-pin" label="Aktive Spielstätten" :value="$activeLocations" />
 
-            <x-statistic-card bgColor="bg-cyan-500" icon="trophy" label="Alle Turniere" :value="$totalTournaments" />
-            <x-statistic-card bgColor="bg-indigo-500" icon="calendar-plus" label="Kommende Turniere" :value="$upcomingTournaments" />
-            <x-statistic-card bgColor="bg-purple-500" icon="calendar-check" label="Gespielte Turniere" :value="$playedTournaments" />
+            <x-statistic-card href="{{ route('admin.tournaments.index') }}" borderColor="#06B6D4" bgColor="bg-cyan-500" icon="trophy" label="Alle Turniere" :value="$totalTournaments" />
+            <x-statistic-card href="{{ route('admin.tournaments.index') }}" borderColor="#6366F1" bgColor="bg-indigo-500" icon="calendar-plus" label="Kommende Turniere" :value="$upcomingTournaments" />
+            <x-statistic-card href="{{ route('admin.tournaments.index') }}" borderColor="#A855F7" bgColor="bg-purple-500" icon="calendar-check" label="Gespielte Turniere" :value="$playedTournaments" />
 
         </div>
 
