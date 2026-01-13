@@ -43,12 +43,12 @@ Route::fallback(function () {
 })->name('404')->withoutMiddleware(['check.user.details']);
 
 Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])
-    ->middleware(['auth', 'verified', 'check.role:admin,floorman'])->name('dashboard');
+    ->middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.activity'])->name('dashboard');
 
 Route::get('/turniere', [TournamentPublicController::class, 'index'])->name('tournaments.index');
 
 // Admin routes
-Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.activity'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
     Route::get('/users/create', [App\Http\Controllers\AdminController::class, 'createUser'])->name('users.create');
     Route::post('/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('users.store');

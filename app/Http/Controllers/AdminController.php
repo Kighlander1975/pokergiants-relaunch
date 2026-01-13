@@ -75,7 +75,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $allowedRoles = ['player', 'floorman', 'admin'];
-        $allowedStatuses = ['avatar', 'no_avatar', 'active', 'inactive', 'verified', 'unverified'];
+        $allowedStatuses = ['avatar', 'no_avatar', 'active', 'inactive', 'verified', 'unverified', 'online'];
         $perPage = (int) $request->query('per_page', 5);
 
         $requestedRoles = collect($request->query('roles', []))
@@ -121,6 +121,10 @@ class AdminController extends Controller
             })
             ->when(in_array('unverified', $requestedStatuses, true), function ($query) {
                 $query->whereNull('email_verified_at');
+            })
+            ->when(in_array('online', $requestedStatuses, true), function ($query) {
+                $query->whereNotNull('last_online_at')
+                    ->where('last_online_at', '>=', now()->subMinutes(5));
             });
 
         $users = $usersQuery->paginate(max($perPage, 1))->withQueryString();

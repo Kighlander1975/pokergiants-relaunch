@@ -14,10 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.user.details' => \App\Http\Middleware\CheckUserDetails::class,
             'check.role' => \App\Http\Middleware\CheckRole::class,
+            'track.user.activity' => \App\Http\Middleware\TrackUserActivity::class,
         ]);
 
         $middleware->web(append: [
             \App\Http\Middleware\CheckUserDetails::class,
+            \App\Http\Middleware\TrackUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -59,6 +59,12 @@
                             </label>
                         </div>
                         <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
+                            <label class="inline-flex items-center gap-1">
+                                <input type="checkbox" data-filter-type="status" value="online" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('online', $statusFilters) ? 'checked' : '' }}>
+                                <span>Nur online</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-start gap-1 text-sm text-gray-700">
                             <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Avatar</span>
                             <label class="inline-flex items-center gap-1">
                                 <input type="radio" name="status_avatar" data-filter-type="status" data-status-group="avatar" value="avatar" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" {{ in_array('avatar', $statusFilters) ? 'checked' : '' }}>
@@ -114,12 +120,17 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spitzname</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-Mail</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rolle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zuletzt Online</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registriert</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($users as $user)
+                        @php
+                        $userRole = optional($user->userDetail)->role ?? 'player';
+                        $hasAvatar = optional($user->userDetail)->getFirstMedia('avatar');
+                        @endphp
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div class="flex items-center gap-2">
@@ -129,7 +140,7 @@
                                     <x-icon name="envelope-open" class="w-5 h-5 text-gray-400" />
                                     @endif
 
-                                    @if($user->userDetail->getFirstMedia('avatar'))
+                                    @if($hasAvatar)
                                     <x-icon name="user-circle" class="w-5 h-5 text-purple-500" />
                                     @else
                                     <x-icon name="user-circle" type="far" class="w-5 h-5 text-purple-500" />
@@ -147,13 +158,14 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            @if($user->userDetail->role === 'admin') bg-red-100 text-red-800
-                                            @elseif($user->userDetail->role === 'floorman') bg-yellow-100 text-yellow-800
+                                            @if($userRole === 'admin') bg-red-100 text-red-800
+                                            @elseif($userRole === 'floorman') bg-yellow-100 text-yellow-800
                                             @else bg-gray-100 text-gray-800 @endif">
-                                    {{ $user->userDetail->role === 'admin' ? 'Administrator' : ($user->userDetail->role === 'floorman' ? 'Floorman' : 'Spieler') }}
+                                    {{ $userRole === 'admin' ? 'Administrator' : ($userRole === 'floorman' ? 'Floorman' : 'Spieler') }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d.m.Y H:i') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->last_online_label }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ optional($user->created_at)->format('d.m.Y H:i') ?? '—' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Bearbeiten</a>
                                 <form method="POST" action="{{ route('admin.users.delete', $user) }}" class="inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?')">
@@ -207,6 +219,6 @@
 </div>
 
 @push('scripts')
-    @vite('resources/js/admin/users-filters.js')
+@vite('resources/js/admin/users-filters.js')
 @endpush
 @endsection

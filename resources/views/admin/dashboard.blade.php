@@ -69,11 +69,16 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spitzname</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-Mail</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rolle</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zuletzt Online</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registriert</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($recentUsers as $user)
+                            @php
+                            $userRole = optional($user->userDetail)->role ?? 'player';
+                            $hasAvatar = optional($user->userDetail)->getFirstMedia('avatar');
+                            @endphp
                             <tr class="hover:bg-indigo-50 cursor-pointer transition-colors duration-150" data-href="{{ route('admin.users.show', $user) }}">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-2">
@@ -85,7 +90,7 @@
                                         @endif
 
                                         <!-- Avatar Status -->
-                                        @if($user->userDetail->getFirstMedia('avatar'))
+                                        @if($hasAvatar)
                                         <x-icon name="user-circle" class="w-5 h-5 text-purple-500" />
                                         @else
                                         <x-icon name="user-circle" type="far" class="w-5 h-5 text-purple-500" />
@@ -101,8 +106,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user->nickname }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->userDetail->role ?? 'player' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d.m.Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userRole }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->last_online_label }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ optional($user->created_at)->format('d.m.Y') ?? '—' }}</td>
                             </tr>
                             @endforeach
                         </tbody>
