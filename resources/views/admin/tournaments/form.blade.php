@@ -35,10 +35,15 @@ $tournament = $tournament ?? null;
         <p class="text-xs text-gray-500 mb-2">Fülle die Plätze ohne Lücken auf – es erscheint automatisch ein neues Feld.</p>
         <div id="prices-wrapper" class="space-y-2">
             @php
-            $priceEntries = old('prices', $tournament->prices ?? ['']);
-            if (count($priceEntries) === 0) {
-            $priceEntries = [''];
-            }
+                $priceEntries = old('prices', $tournament->prices ?? []);
+                if (count($priceEntries) === 0) {
+                    $priceEntries = [''];
+                }
+                $lastPrice = trim((string) end($priceEntries));
+                if ($lastPrice !== '') {
+                    $priceEntries[] = '';
+                }
+                reset($priceEntries);
             @endphp
             @foreach($priceEntries as $index => $value)
             <div class="relative">
@@ -78,6 +83,100 @@ $tournament = $tournament ?? null;
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const wrapper = document.getElementById('prices-wrapper');
+        const dirtyTrackers = [];
+
+        const serializeForm = (form) => {
+            const entries = [];
+            const radioGroups = new Set();
+
+            form.querySelectorAll('input, select, textarea').forEach((element) => {
+                if (!element.name) return;
+
+                if (element.type === 'radio') {
+                    if (radioGroups.has(element.name)) {
+                        return;
+                    }
+                    radioGroups.add(element.name);
+                    const selected = form.querySelector(`input[name="${element.name}"]:checked`);
+                    entries.push(`${element.name}:${selected ? selected.value : ''}`);
+                    return;
+                }
+
+                if (element.type === 'checkbox') {
+                    entries.push(`${element.name}:${element.checked ? '1' : '0'}:${element.value}`);
+                    return;
+                }
+
+                if (element.tagName === 'SELECT') {
+                    if (element.multiple) {
+                        const values = Array.from(element.selectedOptions).map((option) => option.value).join(',');
+                        entries.push(`${element.name}:${values}`);
+                    } else {
+                        entries.push(`${element.name}:${element.value}`);
+                    }
+                    return;
+                }
+
+                entries.push(`${element.name}:${element.value}`);
+            });
+
+            return entries.join('|');
+        };
+
+        const createDirtyTracker = (form) => {
+            const buttonSelector = form.dataset.dirtyButton || 'button[type="submit"]';
+            const submitButton = form.querySelector(buttonSelector);
+
+            if (!submitButton) {
+                return null;
+            }
+
+            const tracker = {
+                form,
+                button: submitButton,
+                initialState: '',
+                serialize() {
+                    return serializeForm(this.form);
+                },
+                check() {
+                    const currentState = this.serialize();
+                    const dirty = currentState !== this.initialState;
+                    this.button.disabled = !dirty;
+                },
+                attach(element) {
+                    if (!element) {
+                        return;
+                    }
+
+                    ['input', 'change'].forEach((eventName) => {
+                        element.addEventListener(eventName, () => this.check());
+                    });
+                },
+            };
+
+            tracker.initialState = tracker.serialize();
+            tracker.button.disabled = true;
+
+            return tracker;
+        };
+
+        const findTrackerForElement = (element) => {
+            const form = element.closest('form');
+            return dirtyTrackers.find((tracker) => tracker.form === form);
+        };
+
+        const registerDirtyForms = () => {
+            document.querySelectorAll('[data-dirty-enabled="true"]').forEach((form) => {
+                const tracker = createDirtyTracker(form);
+                if (!tracker) {
+                    return;
+                }
+
+                form.querySelectorAll('input, select, textarea').forEach((element) => tracker.attach(element));
+                tracker.check();
+                dirtyTrackers.push(tracker);
+            });
+        };
 
         function addPriceRow(value = '') {
             const index = wrapper.querySelectorAll('input[name="prices[]"]').length;
@@ -88,7 +187,14 @@ $tournament = $tournament ?? null;
                 <input type="text" name="prices[]" value="${value}" class="mt-1 block w-full border border-gray-300 rounded-md px-12 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Preis für Platz ${index + 1}">
             `;
             wrapper.appendChild(row);
-            row.querySelector('input').addEventListener('input', onPriceInput);
+            const input = row.querySelector('input');
+            input.addEventListener('input', onPriceInput);
+
+            const tracker = findTrackerForElement(input);
+            if (tracker) {
+                tracker.attach(input);
+                tracker.check();
+            }
         }
 
         function onPriceInput(event) {
@@ -97,11 +203,20 @@ $tournament = $tournament ?? null;
             if (last && last.value.trim() !== '') {
                 addPriceRow('');
             }
+
+            const tracker = findTrackerForElement(event.target);
+            if (tracker) {
+                tracker.check();
+            }
         }
 
-        wrapper.querySelectorAll('input[name="prices[]"]').forEach(input => {
-            input.addEventListener('input', onPriceInput);
-        });
+        if (wrapper) {
+            wrapper.querySelectorAll('input[name="prices[]"]').forEach((input) => {
+                input.addEventListener('input', onPriceInput);
+            });
+        }
+
+        registerDirtyForms();
     });
 </script>
 @endpush
