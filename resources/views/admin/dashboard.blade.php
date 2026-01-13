@@ -51,7 +51,7 @@
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2">
                             <label for="per_page" class="text-sm text-gray-600">Anzeigen:</label>
-                            <select id="per_page" name="per_page" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <select id="per_page" name="per_page" class="border border-gray-300 rounded-md px-4 py-1 pr-10 text-sm bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>5</option>
                                 <option value="10" {{ request('per_page', 5) == 10 ? 'selected' : '' }}>10</option>
                                 <option value="25" {{ request('per_page', 5) == 25 ? 'selected' : '' }}>25</option>

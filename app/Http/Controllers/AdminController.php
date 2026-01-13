@@ -15,27 +15,41 @@ class AdminController extends Controller
 {
     public function dashboard(Request $request)
     {
+        $recentUsersPerPage = max(1, min((int) $request->query('per_page', 5), 50));
+
         $totalUsers = User::count();
-        $perPage = $request->get('per_page', 5); // Default 5, kann 5, 10, 25, 50 sein
-        $recentUsers = User::with('userDetail')->where('created_at', '>=', now()->subDays(14))->latest()->take($perPage)->get();
-        $adminUsersCount = UserDetail::whereIn('role', ['admin', 'floorman'])->count();
-        // Neue Statistiken
-        $activeUsers24h = User::where('created_at', '>=', now()->subDay())->count();
-        $inactiveUsers = User::where('created_at', '<', now()->subDays(30))->count();
+        $recentUsers = User::with('userDetail')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->latest('created_at')
+            ->take($recentUsersPerPage)
+            ->get();
+        $adminUsersCount = UserDetail::where('role', 'admin')->count();
+        $activeUsers24h = User::where('updated_at', '>=', now()->subDay())->count();
+        $inactiveUsers = User::where('updated_at', '<', now()->subDays(30))->count();
         $usersWithAvatars = UserDetail::whereHas('media', function ($query) {
             $query->where('collection_name', 'avatar');
         })->count();
-        $usersWithoutAvatars = $totalUsers - $usersWithAvatars;
+        $usersWithoutAvatars = max(0, $totalUsers - $usersWithAvatars);
         $verifiedEmails = User::whereNotNull('email_verified_at')->count();
-        $unverifiedEmails = $totalUsers - $verifiedEmails;
-        $usersWithProfile = UserDetail::whereNotNull('firstname')->orWhereNotNull('lastname')->orWhereNotNull('city')->count();
-        $usersWithoutProfile = $totalUsers - $usersWithProfile;
+        $unverifiedEmails = max(0, $totalUsers - $verifiedEmails);
+        $usersWithProfile = UserDetail::where(function ($query) {
+            $query->whereNotNull('firstname')
+                ->orWhereNotNull('lastname')
+                ->orWhereNotNull('country')
+                ->orWhereNotNull('city')
+                ->orWhereNotNull('bio');
+        })->count();
+        $usersWithoutProfile = max(0, $totalUsers - $usersWithProfile);
         $totalTournaments = Tournament::count();
         $upcomingTournaments = Tournament::upcoming()->count();
         $playedTournaments = Tournament::played()->count();
         $totalLocations = Location::count();
-        $activeLocations = Location::where('is_active', true)->count();
-        $upcomingTournamentList = Tournament::upcoming()->with('location')->orderBy('starts_at')->take(4)->get();
+        $activeLocations = Location::active()->count();
+        $upcomingTournamentList = Tournament::upcoming()
+            ->with('location')
+            ->orderBy('starts_at')
+            ->take(4)
+            ->get();
 
         return view('admin.dashboard', compact(
             'totalUsers',
@@ -58,12 +72,56 @@ class AdminController extends Controller
         ));
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::with('userDetail')->paginate(20);
+        $allowedRoles = ['player', 'floorman', 'admin'];
+        $allowedStatuses = ['avatar', 'active', 'verified'];
+        $perPage = (int) $request->query('per_page', 5);
+
+        $requestedRoles = collect($request->query('roles', []))
+            ->map(fn($role) => trim($role))
+            ->filter(fn($role) => in_array($role, $allowedRoles, true))
+            ->unique()
+            ->values()
+            ->all();
+
+        $requestedStatuses = collect($request->query('statuses', []))
+            ->map(fn($status) => trim($status))
+            ->filter(fn($status) => in_array($status, $allowedStatuses, true))
+            ->unique()
+            ->values()
+            ->all();
+
+        $usersQuery = User::with('userDetail')
+            ->when(!empty($requestedRoles), function ($query) use ($requestedRoles) {
+                $query->whereHas('userDetail', function ($detailQuery) use ($requestedRoles) {
+                    $detailQuery->whereIn('role', $requestedRoles);
+                });
+            })
+            ->when(in_array('avatar', $requestedStatuses, true), function ($query) {
+                $query->whereHas('userDetail', function ($detailQuery) {
+                    $detailQuery->whereHas('media', function ($mediaQuery) {
+                        $mediaQuery->where('collection_name', 'avatar');
+                    });
+                });
+            })
+            ->when(in_array('active', $requestedStatuses, true), function ($query) {
+                $query->where('updated_at', '>=', now()->subDays(30));
+            })
+            ->when(in_array('verified', $requestedStatuses, true), function ($query) {
+                $query->whereNotNull('email_verified_at');
+            });
+
+        $users = $usersQuery->paginate(max($perPage, 1))->withQueryString();
         $canCreateUsers = $this->currentUserIsAdmin();
 
-        return view('admin.users.index', compact('users', 'canCreateUsers'));
+        return view('admin.users.index', compact(
+            'users',
+            'canCreateUsers',
+            'requestedRoles',
+            'requestedStatuses',
+            'perPage'
+        ));
     }
 
     public function editUser(User $user)
