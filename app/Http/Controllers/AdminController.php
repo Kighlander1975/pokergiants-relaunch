@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserDetail;
-use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -31,8 +30,6 @@ class AdminController extends Controller
         $unverifiedEmails = $totalUsers - $verifiedEmails;
         $usersWithProfile = UserDetail::whereNotNull('firstname')->orWhereNotNull('lastname')->orWhereNotNull('city')->count();
         $usersWithoutProfile = $totalUsers - $usersWithProfile;
-        $totalPages = \App\Models\Page::count();
-        $publishedPages = \App\Models\Page::where('is_published', true)->count();
 
         return view('admin.dashboard', compact(
             'totalUsers',
@@ -45,9 +42,7 @@ class AdminController extends Controller
             'verifiedEmails',
             'unverifiedEmails',
             'usersWithProfile',
-            'usersWithoutProfile',
-            'totalPages',
-            'publishedPages'
+            'usersWithoutProfile'
         ));
     }
 
@@ -103,54 +98,4 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('success', 'Benutzer erfolgreich gelöscht.');
     }
 
-    // CMS Methods
-    public function pages()
-    {
-        $pages = Page::paginate(20);
-        return view('admin.pages.index', compact('pages'));
-    }
-
-    public function createPage()
-    {
-        return view('admin.pages.create');
-    }
-
-    public function storePage(Request $request)
-    {
-        $request->validate([
-            'slug' => 'required|string|unique:pages,slug',
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'is_published' => 'boolean',
-        ]);
-
-        Page::create($request->all());
-
-        return redirect()->route('admin.pages')->with('success', 'Seite erfolgreich erstellt.');
-    }
-
-    public function editPage(Page $page)
-    {
-        return view('admin.pages.edit', compact('page'));
-    }
-
-    public function updatePage(Request $request, Page $page)
-    {
-        $request->validate([
-            'slug' => 'required|string|unique:pages,slug,' . $page->id,
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'is_published' => 'boolean',
-        ]);
-
-        $page->update($request->all());
-
-        return redirect()->route('admin.pages')->with('success', 'Seite erfolgreich aktualisiert.');
-    }
-
-    public function deletePage(Page $page)
-    {
-        $page->delete();
-        return redirect()->route('admin.pages')->with('success', 'Seite erfolgreich gelöscht.');
-    }
 }

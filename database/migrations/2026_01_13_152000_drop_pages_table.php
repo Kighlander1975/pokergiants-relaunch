@@ -11,6 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('pages');
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
@@ -19,13 +27,5 @@ return new class extends Migration
             $table->boolean('is_published')->default(false);
             $table->timestamps();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('pages');
     }
 };

@@ -50,13 +50,6 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('ad
     Route::patch('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
 
-    // CMS routes
-    Route::get('/pages', [App\Http\Controllers\AdminController::class, 'pages'])->name('pages');
-    Route::get('/pages/create', [App\Http\Controllers\AdminController::class, 'createPage'])->name('pages.create');
-    Route::post('/pages', [App\Http\Controllers\AdminController::class, 'storePage'])->name('pages.store');
-    Route::get('/pages/{page}/edit', [App\Http\Controllers\AdminController::class, 'editPage'])->name('pages.edit');
-    Route::patch('/pages/{page}', [App\Http\Controllers\AdminController::class, 'updatePage'])->name('pages.update');
-    Route::delete('/pages/{page}', [App\Http\Controllers\AdminController::class, 'deletePage'])->name('pages.delete');
 });
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])

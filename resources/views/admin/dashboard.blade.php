@@ -33,9 +33,6 @@
 
             <x-statistic-card bgColor="bg-teal-500" icon="file" label="Benutzer ohne Profil" :value="$usersWithoutProfile" />
 
-            <x-statistic-card bgColor="bg-cyan-500" icon="copy" label="Gesamt Seiten" :value="$totalPages" />
-
-            <x-statistic-card bgColor="bg-emerald-500" icon="star" label="Veröffentlichte Seiten" :value="$publishedPages" />
         </div>
 
         <!-- Recent Users -->
@@ -69,7 +66,7 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($recentUsers as $user)
-                            <tr class="hover:bg-indigo-50 cursor-pointer transition-colors duration-150" onclick="window.location.href='{{ route('admin.users.show', $user) }}'">
+                            <tr class="hover:bg-indigo-50 cursor-pointer transition-colors duration-150" data-href="{{ route('admin.users.show', $user) }}">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-2">
                                         <!-- E-Mail Verifizierung -->
@@ -161,7 +158,14 @@
 </div>
 
 <script>
-    document.getElementById('per_page').addEventListener('change', function() {
+    document.querySelectorAll('tr[data-href]').forEach((row) => {
+        row.addEventListener('click', () => {
+            window.location.href = row.dataset.href;
+        });
+    });
+
+    const perPageSelect = document.getElementById('per_page');
+    perPageSelect?.addEventListener('change', function() {
         const perPage = this.value;
         const url = new URL(window.location);
         url.searchParams.set('per_page', perPage);
