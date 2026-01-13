@@ -64,6 +64,15 @@
                     <span class="sidebar-text">Locations</span>
                 </a>
 
+                <a href="{{ route('admin.news.index') }}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.news*') ? 'bg-gray-700 text-white' : '' }}">
+                    <svg class="w-5 h-5 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h14v14H5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9h6v2H9z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6v2H9z"></path>
+                    </svg>
+                    <span class="sidebar-text">News</span>
+                </a>
+
                 <!-- Add more navigation items here -->
             </nav>
         </aside>

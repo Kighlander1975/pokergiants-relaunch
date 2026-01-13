@@ -9,3 +9,4 @@
 5. Planung für spätere Freigabe-Workflows und Autorisierungen (nur Admins dürfen News erstellen; Floorman/Admins greifen bei Kommentarfreigaben ein; Kommentare können auch von ihrem Autor auf Ebene 1+2 ergänzt werden, bleiben aber unsichtbar, bis neue Version freigegeben wird)
 6. Routen- und Controller-Outline vorbereiten (News CRUD, Kommentarfreigabe)
 7. Backend-Oberflächen identifizieren, die später getestet werden sollen (News-Form, Comment-Moderation, Editor-UI)
+   Seitenleist

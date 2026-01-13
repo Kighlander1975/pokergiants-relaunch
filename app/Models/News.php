@@ -10,6 +10,9 @@ class News extends Model
 {
     use HasFactory;
 
+    public const CATEGORY_INTERNAL = 'interne_pokernews';
+    public const CATEGORY_EXTERNAL = 'externe_pokernews';
+
     protected $fillable = [
         'title',
         'slug',
@@ -21,6 +24,7 @@ class News extends Model
         'comments_allowed',
         'published',
         'auto_publish_at',
+        'content',
     ];
 
     protected $casts = [
@@ -31,13 +35,28 @@ class News extends Model
         'auto_publish_at' => 'datetime',
     ];
 
-    protected static function booted(): void
+    public static function categories(): array
     {
-        static::saving(function (News $news) {
-            if ($news->isDirty('title')) {
-                $news->slug = Str::slug($news->title);
-            }
-        });
+        return [
+            self::CATEGORY_INTERNAL => 'Interne Pokernews',
+            self::CATEGORY_EXTERNAL => 'Externe Pokernews',
+        ];
+    }
+
+    public static function generateSlug(string $title, int $ignoreId = null): string
+    {
+        $baseSlug = Str::slug($title);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (static::where('slug', $slug)
+            ->when($ignoreId, fn($query) => $query->where('id', '!=', $ignoreId))->exists()
+        ) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     public function comments()

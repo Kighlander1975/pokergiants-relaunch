@@ -33,7 +33,8 @@
         },
         "files": [
             "app/Helpers/FlagHelper.php",
-            "app/Helpers/FlagListHelper.php"
+            "app/Helpers/FlagListHelper.php",
+            "app/Helpers/IconHelper.php"
         ]
     },
     "autoload-dev": {
