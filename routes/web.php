@@ -45,11 +45,12 @@ Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboar
 // Admin routes
 Route::middleware(['auth', 'verified', 'check.role:admin,floorman'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
+    Route::get('/users/create', [App\Http\Controllers\AdminController::class, 'createUser'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('users.store');
     Route::get('/users/{user}', [App\Http\Controllers\AdminController::class, 'showUser'])->name('users.show');
     Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('users.edit');
     Route::patch('/users/{user}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
-
 });
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])

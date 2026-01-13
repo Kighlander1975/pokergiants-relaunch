@@ -12,7 +12,15 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-medium text-gray-900">Alle Benutzer</h3>
-                    <a href="{{ route('dashboard') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Zurück zur Übersicht</a>
+                    <div class="flex items-center space-x-3">
+                        <a href="{{ route('dashboard') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Zurück zur Übersicht</a>
+                        <a href="{{ route('admin.users.create') }}"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-150 {{ $canCreateUsers ? '' : 'opacity-50 cursor-not-allowed pointer-events-none' }}"
+                            aria-disabled="{{ $canCreateUsers ? 'false' : 'true' }}"
+                            {{ $canCreateUsers ? '' : 'tabindex="-1"' }}>
+                            Neuen Benutzer anlegen
+                        </a>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">

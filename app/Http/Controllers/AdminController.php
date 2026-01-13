@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewUserCredentials;
 use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -49,7 +48,9 @@ class AdminController extends Controller
     public function users()
     {
         $users = User::with('userDetail')->paginate(20);
-        return view('admin.users.index', compact('users'));
+        $canCreateUsers = $this->currentUserIsAdmin();
+
+        return view('admin.users.index', compact('users', 'canCreateUsers'));
     }
 
     public function editUser(User $user)
@@ -98,4 +99,63 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('success', 'Benutzer erfolgreich gelöscht.');
     }
 
+    public function createUser()
+    {
+        $this->ensureAdmin();
+
+        return view('admin.users.create');
+    }
+
+    public function storeUser(Request $request)
+    {
+        $this->ensureAdmin();
+
+        $validated = $request->validate([
+            'nickname' => 'required|string|max:255|unique:users,nickname',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'role' => 'required|in:player,floorman,admin',
+        ]);
+
+        $password = $this->generateRandomPassword();
+
+        $user = User::create([
+            'nickname' => $validated['nickname'],
+            'email' => $validated['email'],
+            'password' => Hash::make($password),
+        ]);
+
+        $user->email_verified_at = now();
+        $user->save();
+
+        $user->userDetail()->create([
+            'role' => $validated['role'],
+        ]);
+
+        Mail::to($user->email)->send(new NewUserCredentials($user, $password));
+
+        return redirect()->route('admin.users')->with('success', 'Benutzer erfolgreich erstellt und Zugangsdaten per E-Mail versendet.');
+    }
+
+    private function ensureAdmin(): void
+    {
+        abort_unless($this->currentUserIsAdmin(), 403);
+    }
+
+    private function currentUserIsAdmin(): bool
+    {
+        return optional(auth()->user()->userDetail)->role === 'admin';
+    }
+
+    private function generateRandomPassword(int $length = 10): string
+    {
+        $allowedChars = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+        $maxIndex = strlen($allowedChars) - 1;
+        $password = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $allowedChars[random_int(0, $maxIndex)];
+        }
+
+        return $password;
+    }
 }
