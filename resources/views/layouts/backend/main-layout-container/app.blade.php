@@ -130,7 +130,6 @@
                             @endforeach
                         </div>
                     </div> --}}
-                    --}}
                 </div>
 
                 <!-- Add more navigation items here -->
