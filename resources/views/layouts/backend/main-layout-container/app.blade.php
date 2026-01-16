@@ -18,7 +18,9 @@
     @vite(['resources/css/backend/be_layout.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased backend-body">
+<body class="antialiased backend-body" 
+      data-headlines-routes="{{ \App\Models\Section::whereHas('headline')->pluck('section_name')->toJson() }}"
+      data-views-routes="{{ \App\Models\Section::pluck('section_name')->toJson() }}">
     <div class="min-h-screen bg-gray-100 flex">
         <!-- Sidebar -->
         <aside id="sidebar" class="bg-gray-800 text-white w-64 min-h-screen transition-all duration-300 ease-in-out">
@@ -229,7 +231,7 @@
                 }
             }
 
-            const headlinesRoutes = @json(\App\Models\Section::whereHas('headline')->pluck('section_name')->toArray());
+            const headlinesRoutes = JSON.parse(document.body.dataset.headlinesRoutes || '[]');
             const isHeadlinesRouteActive = window.location.pathname.includes('/admin/headlines');
             if (isHeadlinesRouteActive) {
                 const headlinesDropdown = document.querySelectorAll('.sidebar-dropdown-content')[1]; // Assuming second dropdown
@@ -238,7 +240,7 @@
                 }
             }
 
-            const viewsRoutes = @json(\App\Models\Section::pluck('section_name')->toArray());
+            const viewsRoutes = JSON.parse(document.body.dataset.viewsRoutes || '[]');
             const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.includes('/admin/views/' + route));
             if (isViewsRouteActive) {
                 const widgetsDropdown = document.querySelectorAll('.sidebar-dropdown-content')[2]; // Assuming third dropdown
