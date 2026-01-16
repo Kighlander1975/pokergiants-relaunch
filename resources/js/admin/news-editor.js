@@ -82,14 +82,148 @@ const generateSuggestions = (issue) => {
 };
 
 const initNewsEditor = () => {
+    const insertSnippet = (snippet) => {
+        const editor = document.getElementById("content_plain") || document.getElementById("news-content");
+        if (!editor) return;
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const value = editor.value;
+        let finalSnippet = snippet;
+        if (start !== end) {
+            const selected = value.slice(start, end);
+            finalSnippet = snippet.replace('Text hier...', selected);
+        }
+        editor.value = value.slice(0, start) + finalSnippet + value.slice(end);
+        const cursor = start + finalSnippet.length;
+        editor.setSelectionRange(cursor, cursor);
+        editor.focus();
+        editor.dispatchEvent(new Event("input"));
+    };
+
     // Check if news editor elements exist
-    const editor = document.getElementById("news-content");
-    if (!editor) {
-        return;
+    const newsEditor = document.getElementById("news-content");
+
+    let container = document.currentScript.closest('.editor-container');
+    if (!container) {
+        container = document;
+    }
+    const editors = container.querySelectorAll('textarea[id^="content_"]');
+    if (editors.length > 0) {
+
+        editors.forEach(editor => {
+            // Initialize BBEditor with toolbar disabled since we have custom toolbar
+            const bbEditor = new BBEditor(editor, {
+                mode: "full",
+                enablePreview: true,
+                enableCounter: true,
+                enableToolbar: false,
+            });
+
+            // Toolbar button handlers
+            const toolbar = editor
+                .closest(".tab-content")
+                ?.querySelector(".news-editor-toolbar");
+            if (toolbar) {
+                // Undo/Redo
+                toolbar
+                    .querySelector("[data-bb-undo]")
+                    ?.addEventListener("click", () => bbEditor.undo());
+                toolbar
+                    .querySelector("[data-bb-redo]")
+                    ?.addEventListener("click", () => bbEditor.redo());
+
+                // Bold, Italic, etc.
+                toolbar.querySelectorAll("[data-bb-tag]").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const tag = btn.getAttribute("data-bb-tag");
+                        bbEditor.insertTag(tag);
+                    });
+                });
+
+                // Align buttons
+                toolbar.querySelectorAll("[data-bb-align]").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const direction = btn.getAttribute("data-bb-align");
+                        insertSnippet(`[align=${direction}]Text hier...[/align]`);
+                    });
+                });
+
+                // Suit buttons
+                toolbar.querySelectorAll("[data-bb-suit]").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const type = btn.getAttribute("data-bb-suit");
+                        insertSnippet(`[suit=${type}]`);
+                    });
+                });
+
+                // Heading buttons
+                toolbar.querySelectorAll("[data-bb-heading]").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const level = btn.getAttribute("data-bb-heading");
+                        insertSnippet(`[${level}]Text hier... [/${level}]`);
+                    });
+                });
+
+                // Icon button
+                toolbar
+                    .querySelector("[data-bb-icon]")
+                    ?.addEventListener("click", () => {
+                        const iconName = iconValueInput?.value?.trim();
+                        if (!iconName) {
+                            window.alert(
+                                "Bitte wähle ein Icon aus, bevor du es einfügst."
+                            );
+                            return;
+                        }
+
+                        insertSnippet(`[icon=${iconName}]`);
+                    });
+
+                updateIconPreviewFromInput();
+            }
+
+            // Preview modal
+            const previewModal = document.getElementById("plain-preview-modal");
+            const openPreviewBtn = document.getElementById("openPlainPreview");
+
+            if (previewModal && openPreviewBtn) {
+                const previewBodyEl = previewModal.querySelector(
+                    ".modal-body"
+                );
+                const openPreview = () => {
+                    const bbCode = editor.value;
+                    const html = convertBBToPreviewHtml(bbCode);
+                    previewBodyEl.innerHTML = html;
+                    previewModal.classList.remove("hidden");
+                    openPreviewBtn.setAttribute("aria-expanded", "true");
+                };
+                const closePreview = () => {
+                    previewModal.classList.add("hidden");
+                    openPreviewBtn.setAttribute("aria-expanded", "false");
+                };
+
+                openPreviewBtn.addEventListener("click", openPreview);
+                const previewCloseButtons = previewModal.querySelectorAll(
+                    "[data-close-modal]"
+                );
+                previewCloseButtons.forEach((button) =>
+                    button.addEventListener("click", closePreview)
+                );
+                previewModal.addEventListener("click", (event) => {
+                    if (event.target === previewModal) {
+                        closePreview();
+                    }
+                });
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape") {
+                        closePreview();
+                    }
+                });
+            }
+        });
     }
 
-    // Initialize BBEditor with toolbar disabled since we have custom toolbar
-    const bbEditor = new BBEditor(editor, {
+    if (newsEditor) {
         mode: "full",
         enableToolbar: false,
         enableCounter: false, // We have custom counter
