@@ -42,15 +42,15 @@
                         </div>
                     </div>
                 @else
-                    <div id="widgets-list" class="space-y-4">
+                    <div class="space-y-4">
                         @foreach($widgets as $widget)
-                            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 widget-item relative" data-widget-id="{{ $widget->id }}">
-                                <div class="absolute top-2 left-2 cursor-move text-gray-400 hover:text-gray-600 z-10">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-                                    </svg>
-                                </div>
-                                <div class="flex items-center justify-between pl-8">
+                            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3">
+                                            <h4 class="text-sm font-medium text-gray-900">
+                                                {{ $widget->internal_name ?: 'Widget #' . $widget->id }}
+                                            </h4>
                                             <h4 class="text-sm font-medium text-gray-900">
                                                 {{ $widget->internal_name ?: 'Widget #' . $widget->id }}
                                             </h4>
@@ -169,88 +169,5 @@ function toggleDebugPanel() {
     const panel = document.getElementById('debug-panel');
     panel.classList.toggle('hidden');
 }
-</script>
-
-@section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const widgetsList = document.getElementById('widgets-list');
-    if (!widgetsList) return;
-
-    let draggedElement = null;
-
-    // Add drag event listeners to each widget item
-    const widgetItems = widgetsList.querySelectorAll('.widget-item');
-    widgetItems.forEach(item => {
-        item.draggable = true;
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', handleDrop);
-        item.addEventListener('dragend', handleDragEnd);
-    });
-
-    function handleDragStart(e) {
-        draggedElement = this;
-        this.classList.add('opacity-50');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.outerHTML);
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        return false;
-    }
-
-    function handleDrop(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (draggedElement !== this) {
-            // Reorder the DOM elements
-            const allItems = Array.from(widgetsList.children);
-            const draggedIndex = allItems.indexOf(draggedElement);
-            const targetIndex = allItems.indexOf(this);
-
-            if (draggedIndex < targetIndex) {
-                this.parentNode.insertBefore(draggedElement, this.nextSibling);
-            } else {
-                this.parentNode.insertBefore(draggedElement, this);
-            }
-
-            // Send reorder request
-            const widgetItems = widgetsList.querySelectorAll('.widget-item');
-            const widgetIds = Array.from(widgetItems).map(item => parseInt(item.dataset.widgetId));
-
-            fetch('{{ route("admin.widgets.reorder", $sectionModel->section_name) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    widget_ids: widgetIds
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Widgets reordered successfully');
-                }
-            })
-            .catch(error => {
-                console.error('Error reordering widgets:', error);
-                location.reload();
-            });
-        }
-
-        return false;
-    }
-
-    function handleDragEnd(e) {
-        this.classList.remove('opacity-50');
-        draggedElement = null;
-    }
-});
 </script>
 @endsection
