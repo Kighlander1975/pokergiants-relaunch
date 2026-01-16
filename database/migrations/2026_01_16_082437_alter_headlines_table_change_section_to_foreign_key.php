@@ -9,8 +9,6 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    use Illuminate\Support\Facades\DB;
-
     public function up(): void
     {
         // Erstelle sections für bestehende headlines
