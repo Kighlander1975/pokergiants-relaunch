@@ -111,7 +111,8 @@
                         </div>
                     </div>
 
-                    <!-- Widgets Dropdown -->
+                    <!-- Widgets Dropdown - Temporarily disabled until widget system is implemented -->
+                    <!--
                     <div class="sidebar-dropdown">
                         <button class="sidebar-dropdown-toggle flex items-center px-4 py-3 pl-8 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
                             <svg class="w-4 h-4 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,6 +131,7 @@
                             @endforeach
                         </div>
                     </div>
+                    -->
                 </div>
 
                 <!-- Add more navigation items here -->
@@ -240,14 +242,15 @@
                 }
             }
 
-            const viewsRoutes = JSON.parse(document.body.dataset.viewsRoutes || '[]');
-            const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.includes('/admin/views/' + route));
-            if (isViewsRouteActive) {
-                const widgetsDropdown = document.querySelectorAll('.sidebar-dropdown-content')[2]; // Assuming third dropdown
-                if (widgetsDropdown) {
-                    widgetsDropdown.classList.remove('hidden');
-                }
-            }
+            // Widgets dropdown temporarily disabled
+            // const viewsRoutes = JSON.parse(document.body.dataset.viewsRoutes || '[]');
+            // const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.includes('/admin/views/' + route));
+            // if (isViewsRouteActive) {
+            //     const widgetsDropdown = document.querySelectorAll('.sidebar-dropdown-content')[2]; // Assuming third dropdown
+            //     if (widgetsDropdown) {
+            //         widgetsDropdown.classList.remove('hidden');
+            //     }
+            // }
         });
     </script>
     @stack('scripts')

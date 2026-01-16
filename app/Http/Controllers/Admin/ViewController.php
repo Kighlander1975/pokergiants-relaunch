@@ -14,9 +14,10 @@ class ViewController extends Controller
         return view('admin.views.index', compact('sections'));
     }
 
-    public function home()
-    {
-        $headline = Headline::where('section_id', Section::where('section_name', 'home')->value('id'))->first();
-        return view('admin.views.home', compact('headline'));
-    }
+    // Temporarily disabled - will be replaced with widget system
+    // public function home()
+    // {
+    //     $headline = Headline::where('section_id', Section::where('section_name', 'home')->value('id'))->first();
+    //     return view('admin.views.home', compact('headline'));
+    // }
 }

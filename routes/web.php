@@ -92,7 +92,7 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::patch('/news/{news}/comments/{comment}/reject', [NewsCommentController::class, 'reject'])->name('news.comments.reject');
 
     Route::get('/views', [App\Http\Controllers\Admin\ViewController::class, 'index'])->name('views.index');
-    Route::get('/views/home', [App\Http\Controllers\Admin\ViewController::class, 'home'])->name('views.home');
+    // Route::get('/views/home', [App\Http\Controllers\Admin\ViewController::class, 'home'])->name('views.home'); // Temporarily disabled - will be replaced with widget system
 
     Route::resource('headlines', App\Http\Controllers\Admin\HeadlineController::class);
     Route::resource('sections', App\Http\Controllers\Admin\SectionController::class);

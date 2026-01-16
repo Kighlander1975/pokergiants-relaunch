@@ -24,7 +24,7 @@
 </div>
 <div class="glass-card">
     <h2 class="text-center">Termine</h2>
-    <pHier findest du die neuesten Termine der Pokergiants.de Turniere.</p>
+    <p>Hier findest du die neuesten Termine der Pokergiants.de Turniere.</p>
         <ul>
             <li>Feature 1: Beschreibung des Features 1.</li>
             <li>Feature 2: Beschreibung des Features 2.</li>
