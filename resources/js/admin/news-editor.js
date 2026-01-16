@@ -393,6 +393,8 @@ const initNewsEditor = () => {
     });
 
     const insertSnippet = (snippet) => {
+        const editor = document.getElementById("content_plain") || document.getElementById("news-content");
+        if (!editor) return;
         const start = editor.selectionStart;
         const end = editor.selectionEnd;
         const value = editor.value;
