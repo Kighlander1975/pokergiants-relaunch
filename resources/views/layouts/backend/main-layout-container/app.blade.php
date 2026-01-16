@@ -18,9 +18,11 @@
     @vite(['resources/css/backend/be_layout.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased backend-body" 
+<body class="antialiased backend-body"
       data-headlines-routes="{{ \App\Models\Section::whereHas('headline')->pluck('section_name')->toJson() }}"
-      data-views-routes="{{ \App\Models\Section::pluck('section_name')->toJson() }}">
+      data-views-routes="{{ \App\Models\Section::pluck('section_name')->toJson() }}"
+      data-current-section="{{ request()->route('section') ? request()->route('section')->section_name : (request()->route('headline') ? request()->route('headline')->section->section_name : (request()->get('section') ?: '')) }}"
+      data-current-area="{{ request()->routeIs('admin.headlines.*') ? 'headlines' : (request()->routeIs('admin.widgets.*') ? 'widgets' : '') }}">
     <div class="min-h-screen bg-gray-100 flex">
         <!-- Sidebar -->
         <aside id="sidebar" class="bg-gray-800 text-white w-64 min-h-screen transition-all duration-300 ease-in-out">
@@ -72,58 +74,36 @@
                     </div>
                 </div>
 
-                <a href="{{ route('admin.views.index') }}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.views.index') ? 'bg-gray-700 text-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                    <span class="sidebar-text">Views</span>
-                </a>
-
-                <div class="mt-8">
-                    <h3 class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider sidebar-text">Views</h3>
-                    <a href="{{ route('admin.sections.create') }}" class="sidebar-link flex items-center px-4 py-3 pl-8 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
-                        <svg class="w-4 h-4 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        <span class="sidebar-text">Neue Sektion</span>
-                    </a>
-
-                    <!-- Headlines Dropdown -->
-                    <div class="sidebar-dropdown">
-                        <button class="sidebar-dropdown-toggle flex items-center px-4 py-3 pl-8 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
-                            <svg class="w-4 h-4 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                            </svg>
-                            <span class="sidebar-text">Headlines</span>
-                            <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div class="sidebar-dropdown-content hidden pl-8">
-                            @foreach(\App\Models\Section::all() as $section)
-                            @if($section->headline)
-                            <a href="{{ route('admin.headlines.edit', $section->headline) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.headlines.edit') && request()->route('headline')->id == $section->headline->id ? 'bg-gray-700 text-white' : '' }}">
-                                <span class="sidebar-text">{{ ucfirst($section->section_name) }}</span>
-                            </a>
-                            @endif
-                            @endforeach
-                        </div>
-                    </div>
-
-                <!-- Widgets Dropdown -->
+                <!-- Views Dropdown -->
                 <div class="sidebar-dropdown">
                     <button class="sidebar-dropdown-toggle flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
                         <svg class="w-5 h-5 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
-                        <span class="sidebar-text">Widgets</span>
+                        <span class="sidebar-text">Views</span>
                         <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
                     <div class="sidebar-dropdown-content hidden pl-4">
-                        <!-- Home Section Widgets -->
+                        <!-- Views Übersicht -->
+                        <a href="{{ route('admin.views.index') }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.views.index') ? 'bg-gray-700 text-white' : '' }}">
+                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span class="sidebar-text">Übersicht</span>
+                        </a>
+
+                        <!-- Neue Sektion -->
+                        <a href="{{ route('admin.sections.create') }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <span class="sidebar-text">Neue Sektion</span>
+                        </a>
+
+                        <!-- Home Section -->
                         <div class="sidebar-dropdown">
                             <button class="sidebar-dropdown-toggle flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
                                 <span class="sidebar-text">Home</span>
@@ -132,18 +112,91 @@
                                 </svg>
                             </button>
                             <div class="sidebar-dropdown-content hidden pl-4">
-                                <a href="{{ route('admin.widgets.create', ['section' => 'home']) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                <!-- Headlines -->
+                                @php $homeSection = \App\Models\Section::where('section_name', 'home')->first() @endphp
+                                @if($homeSection && $homeSection->headline)
+                                <a href="{{ route('admin.headlines.edit', $homeSection->headline) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.headlines.edit') && request()->route('headline')->id == $homeSection->headline->id ? 'bg-gray-700 text-white' : '' }}">
                                     <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                     </svg>
-                                    <span class="sidebar-text">Neues Widget</span>
+                                    <span class="sidebar-text">Headlines</span>
                                 </a>
-                                {{-- Placeholder for dynamic widget list --}}
-                                <div class="px-4 py-2 text-gray-500 text-sm sidebar-text">
-                                    Widgets werden hier aufgelistet
+                                @endif
+
+                                <!-- Widgets Submenu -->
+                                <div class="sidebar-dropdown">
+                                    <button class="sidebar-dropdown-toggle flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
+                                        <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        <span class="sidebar-text">Widgets</span>
+                                        <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div class="sidebar-dropdown-content hidden pl-4">
+                                        <a href="{{ route('admin.widgets.create', ['section' => 'home']) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            <span class="sidebar-text">Neues Widget</span>
+                                        </a>
+                                        {{-- Placeholder for dynamic widget list --}}
+                                        <div class="px-4 py-2 text-gray-500 text-sm sidebar-text">
+                                            Widgets werden hier aufgelistet
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Other Sections -->
+                        @foreach(\App\Models\Section::where('section_name', '!=', 'home')->get() as $section)
+                        <div class="sidebar-dropdown">
+                            <button class="sidebar-dropdown-toggle flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
+                                <span class="sidebar-text">{{ ucfirst($section->section_name) }}</span>
+                                <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="sidebar-dropdown-content hidden pl-4">
+                                <!-- Headlines -->
+                                @if($section->headline)
+                                <a href="{{ route('admin.headlines.edit', $section->headline) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.headlines.edit') && request()->route('headline')->id == $section->headline->id ? 'bg-gray-700 text-white' : '' }}">
+                                    <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                    </svg>
+                                    <span class="sidebar-text">Headlines</span>
+                                </a>
+                                @endif
+
+                                <!-- Widgets Submenu -->
+                                <div class="sidebar-dropdown">
+                                    <button class="sidebar-dropdown-toggle flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
+                                        <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        <span class="sidebar-text">Widgets</span>
+                                        <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div class="sidebar-dropdown-content hidden pl-4">
+                                        <a href="{{ route('admin.widgets.create', ['section' => $section->section_name]) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            <span class="sidebar-text">Neues Widget</span>
+                                        </a>
+                                        {{-- Placeholder for dynamic widget list --}}
+                                        <div class="px-4 py-2 text-gray-500 text-sm sidebar-text">
+                                            Widgets werden hier aufgelistet
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -246,21 +299,52 @@
                 }
             }
 
-            const headlinesRoutes = JSON.parse(document.body.dataset.headlinesRoutes || '[]');
-            const isHeadlinesRouteActive = window.location.pathname.includes('/admin/headlines');
-            if (isHeadlinesRouteActive) {
-                const headlinesDropdown = document.querySelectorAll('.sidebar-dropdown-content')[1]; // Assuming second dropdown
-                if (headlinesDropdown) {
-                    headlinesDropdown.classList.remove('hidden');
-                }
-            }
-
-            const viewsRoutes = JSON.parse(document.body.dataset.viewsRoutes || '[]');
-            const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.includes('/admin/views/' + route));
+            // Auto-open Views dropdown for views-related routes
+            const viewsRoutes = ['/admin/views', '/admin/sections/create', '/admin/sections', '/admin/headlines', '/admin/widgets'];
+            const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.startsWith(route));
             if (isViewsRouteActive) {
-                const widgetsDropdown = document.querySelectorAll('.sidebar-dropdown-content')[2]; // Assuming third dropdown
-                if (widgetsDropdown) {
-                    widgetsDropdown.classList.remove('hidden');
+                // Find the Views dropdown (the one containing "Übersicht", "Neue Sektion", etc.)
+                const allDropdowns = document.querySelectorAll('.sidebar-dropdown-content');
+                let viewsDropdown = null;
+                allDropdowns.forEach(dropdown => {
+                    if (dropdown.querySelector('[href*="admin/views"]') || dropdown.querySelector('[href*="admin/sections/create"]')) {
+                        viewsDropdown = dropdown;
+                    }
+                });
+                if (viewsDropdown) {
+                    viewsDropdown.classList.remove('hidden');
+
+                    // Get current section and area from data attributes
+                    const currentSection = document.body.dataset.currentSection;
+                    const currentArea = document.body.dataset.currentArea;
+
+                    if (currentSection) {
+                        // Find and open the specific section dropdown
+                        const sectionButtons = viewsDropdown.querySelectorAll('.sidebar-dropdown-toggle');
+                        sectionButtons.forEach(button => {
+                            const buttonText = button.textContent.trim().toLowerCase();
+                            if (buttonText === currentSection.toLowerCase()) {
+                                const sectionContent = button.nextElementSibling;
+                                if (sectionContent && sectionContent.classList.contains('sidebar-dropdown-content')) {
+                                    sectionContent.classList.remove('hidden');
+
+                                    // If we're in a specific area (headlines or widgets), open the corresponding submenu
+                                    if (currentArea) {
+                                        const submenuButtons = sectionContent.querySelectorAll('.sidebar-dropdown-toggle');
+                                        submenuButtons.forEach(submenuButton => {
+                                            const submenuText = submenuButton.textContent.trim().toLowerCase();
+                                            if (submenuText.includes(currentArea)) {
+                                                const submenuContent = submenuButton.nextElementSibling;
+                                                if (submenuContent && submenuContent.classList.contains('sidebar-dropdown-content')) {
+                                                    submenuContent.classList.remove('hidden');
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
