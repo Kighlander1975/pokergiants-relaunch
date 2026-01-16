@@ -42,12 +42,17 @@
                         </div>
                     </div>
                 @else
-                    <div class="space-y-4">
+                    <div id="widgets-list" class="space-y-4">
                         @foreach($widgets as $widget)
-                            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 widget-item" data-widget-id="{{ $widget->id }}">
                                 <div class="flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="flex items-center space-x-3">
+                                            <div class="cursor-move text-gray-400 hover:text-gray-600 mr-2">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                                </svg>
+                                            </div>
                                             <h4 class="text-sm font-medium text-gray-900">
                                                 {{ $widget->internal_name ?: 'Widget #' . $widget->id }}
                                             </h4>
@@ -166,5 +171,50 @@ function toggleDebugPanel() {
     const panel = document.getElementById('debug-panel');
     panel.classList.toggle('hidden');
 }
+</script>
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const widgetsList = document.getElementById('widgets-list');
+    if (widgetsList) {
+        Sortable.create(widgetsList, {
+            handle: '.cursor-move',
+            animation: 150,
+            ghostClass: 'bg-blue-50',
+            chosenClass: 'border-blue-300',
+            dragClass: 'shadow-lg',
+            scroll: true,
+            scrollSensitivity: 100,
+            scrollSpeed: 20,
+            onEnd: function(evt) {
+                const widgetItems = widgetsList.querySelectorAll('.widget-item');
+                const widgetIds = Array.from(widgetItems).map(item => parseInt(item.dataset.widgetId));
+
+                fetch('{{ route("admin.widgets.reorder", $sectionModel->section_name) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        widget_ids: widgetIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Widgets reordered successfully');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error reordering widgets:', error);
+                    location.reload();
+                });
+            }
+        });
+    }
+});
 </script>
 @endsection

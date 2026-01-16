@@ -210,4 +210,29 @@ class WidgetController extends Controller
 
         return redirect()->back()->with('success', 'Widget wurde nach unten verschoben.');
     }
+
+    /**
+     * Reorder widgets via drag & drop.
+     */
+    public function reorder(Request $request, $section)
+    {
+        $sectionModel = Section::where('section_name', $section)->first();
+        if (!$sectionModel) {
+            abort(404, 'Section not found');
+        }
+
+        $validated = $request->validate([
+            'widget_ids' => 'required|array',
+            'widget_ids.*' => 'integer|exists:widgets,id',
+        ]);
+
+        // Update sort_order for each widget
+        foreach ($validated['widget_ids'] as $index => $widgetId) {
+            Widget::where('id', $widgetId)
+                ->where('section_id', $sectionModel->id)
+                ->update(['sort_order' => $index + 1]);
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

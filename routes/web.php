@@ -111,6 +111,7 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     // Widget sorting routes
     Route::post('/widgets/section/{section}/{widget}/move-up', [App\Http\Controllers\Admin\WidgetController::class, 'moveUp'])->name('widgets.move-up');
     Route::post('/widgets/section/{section}/{widget}/move-down', [App\Http\Controllers\Admin\WidgetController::class, 'moveDown'])->name('widgets.move-down');
+    Route::post('/widgets/section/{section}/reorder', [App\Http\Controllers\Admin\WidgetController::class, 'reorder'])->name('widgets.reorder');
 
     // Debug route for HTML rendering
     Route::get('/widgets/render/{section}', [App\Http\Controllers\Admin\WidgetController::class, 'render'])->name('widgets.render');
