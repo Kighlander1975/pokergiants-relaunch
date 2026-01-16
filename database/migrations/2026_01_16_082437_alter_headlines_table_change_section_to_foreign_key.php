@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,9 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         // Erstelle sections für bestehende headlines
-        $sections = \DB::table('headlines')->distinct()->pluck('section');
+        $sections = DB::table('headlines')->distinct()->pluck('section');
         foreach ($sections as $section) {
-            \DB::table('sections')->insert(['section_name' => $section, 'created_at' => now(), 'updated_at' => now()]);
+            DB::table('sections')->insert(['section_name' => $section, 'created_at' => now(), 'updated_at' => now()]);
         }
 
         // Drop alte Spalte
@@ -28,10 +29,10 @@ return new class extends Migration
         });
 
         // Setze section_id
-        $headlines = \DB::table('headlines')->get();
+        $headlines = DB::table('headlines')->get();
         foreach ($headlines as $headline) {
-            $sectionId = \DB::table('sections')->where('section_name', $headline->section)->value('id');
-            \DB::table('headlines')->where('id', $headline->id)->update(['section_id' => $sectionId]);
+            $sectionId = DB::table('sections')->where('section_name', $headline->section)->value('id');
+            DB::table('headlines')->where('id', $headline->id)->update(['section_id' => $sectionId]);
         }
     }
 
@@ -42,10 +43,10 @@ return new class extends Migration
             $table->string('section')->nullable();
         });
 
-        $headlines = \DB::table('headlines')->get();
+        $headlines = DB::table('headlines')->get();
         foreach ($headlines as $headline) {
-            $sectionName = \DB::table('sections')->where('id', $headline->section_id)->value('section_name');
-            \DB::table('headlines')->where('id', $headline->id)->update(['section' => $sectionName]);
+            $sectionName = DB::table('sections')->where('id', $headline->section_id)->value('section_name');
+            DB::table('headlines')->where('id', $headline->id)->update(['section' => $sectionName]);
         }
 
         Schema::table('headlines', function (Blueprint $table) {
