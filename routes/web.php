@@ -96,6 +96,9 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
 
     Route::resource('widgets', App\Http\Controllers\Admin\WidgetController::class);
     Route::get('/widgets/create/{section}', [App\Http\Controllers\Admin\WidgetController::class, 'create'])->name('widgets.create');
+
+    Route::resource('headlines', App\Http\Controllers\Admin\HeadlineController::class);
+    Route::resource('sections', App\Http\Controllers\Admin\SectionController::class);
 });
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])
