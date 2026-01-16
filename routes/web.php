@@ -48,6 +48,10 @@ Route::fallback(function () {
 Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])
     ->middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.activity'])->name('dashboard');
 
+Route::get('/admin', function () {
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.activity']);
+
 Route::get('/turniere', [TournamentPublicController::class, 'index'])->name('tournaments.index');
 Route::get('/news', [NewsPublicController::class, 'index'])->name('news.index');
 Route::get('/news/{news}/{slug?}', [NewsPublicController::class, 'show'])->name('news.show');
@@ -88,6 +92,14 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::get('/news/{news}/comments', [NewsCommentController::class, 'index'])->name('news.comments.index');
     Route::patch('/news/{news}/comments/{comment}/approve', [NewsCommentController::class, 'approve'])->name('news.comments.approve');
     Route::patch('/news/{news}/comments/{comment}/reject', [NewsCommentController::class, 'reject'])->name('news.comments.reject');
+
+    Route::get('/views', [App\Http\Controllers\Admin\ViewController::class, 'index'])->name('views.index');
+    Route::get('/views/home', [App\Http\Controllers\Admin\ViewController::class, 'home'])->name('views.home');
+    Route::get('/views/news', [App\Http\Controllers\Admin\ViewController::class, 'news'])->name('views.news');
+    Route::get('/views/tournaments', [App\Http\Controllers\Admin\ViewController::class, 'tournaments'])->name('views.tournaments');
+
+    Route::resource('headlines', App\Http\Controllers\Admin\HeadlineController::class);
+    Route::resource('sections', App\Http\Controllers\Admin\SectionController::class);
 });
 
 Route::get('/email/verify', [EmailVerificationPromptController::class, '__invoke'])
