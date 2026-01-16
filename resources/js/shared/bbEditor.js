@@ -56,10 +56,53 @@ class BBEditor {
             const button = document.createElement("button");
             button.type = "button";
             button.className =
-                "bb-button px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm";
-            button.textContent = tag.toUpperCase();
+                "bb-button px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm flex items-center justify-center";
             button.dataset.tag = tag;
+            button.title = tag.toUpperCase(); // Tooltip für alle Tags
             button.addEventListener("click", () => this.insertTag(tag));
+
+            // Spezielle Behandlung für bestimmte Tags
+            if (tag === "ul") {
+                button.innerHTML =
+                    '<span class="text-xs">•</span><span class="text-xs">•</span><span class="text-xs">•</span>';
+                button.title = "Ungeordnete Liste (UL)";
+            } else if (tag === "ol") {
+                button.innerHTML =
+                    '<span class="text-xs">1.</span><span class="text-xs">2.</span><span class="text-xs">3.</span>';
+                button.title = "Geordnete Liste (OL)";
+            } else if (tag === "hr") {
+                button.innerHTML = "―";
+                button.title = "Horizontale Linie (HR)";
+            } else if (tag === "p") {
+                button.innerHTML = "¶";
+                button.title = "Absatz (P)";
+            } else if (tag === "h2") {
+                button.innerHTML = "H₂";
+                button.title = "Überschrift 2 (H2)";
+            } else if (tag === "h3") {
+                button.innerHTML = "H₃";
+                button.title = "Überschrift 3 (H3)";
+            } else if (tag === "h4") {
+                button.innerHTML = "H₄";
+                button.title = "Überschrift 4 (H4)";
+            } else if (tag === "h5") {
+                button.innerHTML = "H₅";
+                button.title = "Überschrift 5 (H5)";
+            } else if (tag === "b") {
+                button.innerHTML = "<strong>B</strong>";
+                button.title = "Fett (Bold)";
+            } else if (tag === "i") {
+                button.innerHTML = "<em>I</em>";
+                button.title = "Kursiv (Italic)";
+            } else if (tag === "u") {
+                button.innerHTML =
+                    '<span style="text-decoration:underline">U</span>';
+                button.title = "Unterstrichen (Underline)";
+            } else {
+                // Standard für alle anderen Tags
+                button.textContent = tag.toUpperCase();
+            }
+
             toolbar.appendChild(button);
         });
         this.textarea.parentNode.insertBefore(toolbar, this.textarea);
@@ -120,11 +163,32 @@ class BBEditor {
         const start = this.textarea.selectionStart;
         const end = this.textarea.selectionEnd;
         const selectedText = this.textarea.value.substring(start, end);
-        const tagOpen = `[${tag}]`;
-        const tagClose = `[/${tag}]`;
-        const replacement = selectedText
-            ? `${tagOpen}${selectedText}${tagClose}`
-            : `${tagOpen}${tagClose}`;
+
+        let replacement;
+
+        // Special handling for lists
+        if (tag === "ul" || tag === "ol") {
+            if (selectedText) {
+                // With selected text: split by line breaks and create list items
+                const lines = selectedText
+                    .split("\n")
+                    .filter((line) => line.trim());
+                const listItems = lines
+                    .map((line) => `\n[*]${line.trim()}`)
+                    .join("");
+                replacement = `[${tag}]${listItems}\n[/${tag}]`;
+            } else {
+                // Without selected text: insert template with two example items
+                replacement = `[${tag}]\n[*]Erster Punkt\n[*]Zweiter Punkt\n[/${tag}]`;
+            }
+        } else {
+            // Default behavior for other tags
+            const tagOpen = `[${tag}]`;
+            const tagClose = `[/${tag}]`;
+            replacement = selectedText
+                ? `${tagOpen}${selectedText}${tagClose}`
+                : `${tagOpen}${tagClose}`;
+        }
 
         this.textarea.setRangeText(replacement, start, end, "end");
         this.textarea.focus();

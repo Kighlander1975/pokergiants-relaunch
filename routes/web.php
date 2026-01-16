@@ -94,8 +94,26 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
     Route::get('/views', [App\Http\Controllers\Admin\ViewController::class, 'index'])->name('views.index');
     // Route::get('/views/home', [App\Http\Controllers\Admin\ViewController::class, 'home'])->name('views.home'); // Temporarily disabled - will be replaced with widget system
 
-    Route::resource('widgets', App\Http\Controllers\Admin\WidgetController::class);
-    Route::get('/widgets/create/{section}', [App\Http\Controllers\Admin\WidgetController::class, 'create'])->name('widgets.create');
+    // Legacy redirect for old widget URLs
+    Route::get('/widgets/create', function () {
+        return redirect('/admin/widgets/new/' . request('section', 'home'));
+    });
+
+    // Widget routes with section context
+    Route::get('/widgets/section/{section}', [App\Http\Controllers\Admin\WidgetController::class, 'index'])->name('widgets.index');
+    Route::get('/widgets/section/{section}/create', [App\Http\Controllers\Admin\WidgetController::class, 'create'])->name('widgets.create');
+    Route::post('/widgets/section/{section}', [App\Http\Controllers\Admin\WidgetController::class, 'store'])->name('widgets.store');
+    Route::get('/widgets/section/{section}/{widget}', [App\Http\Controllers\Admin\WidgetController::class, 'show'])->name('widgets.show');
+    Route::get('/widgets/section/{section}/{widget}/edit', [App\Http\Controllers\Admin\WidgetController::class, 'edit'])->name('widgets.edit');
+    Route::patch('/widgets/section/{section}/{widget}', [App\Http\Controllers\Admin\WidgetController::class, 'update'])->name('widgets.update');
+    Route::delete('/widgets/section/{section}/{widget}', [App\Http\Controllers\Admin\WidgetController::class, 'destroy'])->name('widgets.destroy');
+    
+    // Widget sorting routes
+    Route::post('/widgets/section/{section}/{widget}/move-up', [App\Http\Controllers\Admin\WidgetController::class, 'moveUp'])->name('widgets.move-up');
+    Route::post('/widgets/section/{section}/{widget}/move-down', [App\Http\Controllers\Admin\WidgetController::class, 'moveDown'])->name('widgets.move-down');
+
+    // Debug route for HTML rendering
+    Route::get('/widgets/render/{section}', [App\Http\Controllers\Admin\WidgetController::class, 'render'])->name('widgets.render');
 
     Route::resource('headlines', App\Http\Controllers\Admin\HeadlineController::class);
     Route::resource('sections', App\Http\Controllers\Admin\SectionController::class);

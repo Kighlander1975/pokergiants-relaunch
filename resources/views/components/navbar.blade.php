@@ -48,16 +48,16 @@
                     @auth
                     <li class="nav-item min-h-[68px]">
                         <a class="nav-link d-flex align-items-center px-2 sm:py-2" href="{{ route('profile.show') }}">
-                            <x-avatar
-                                :image-url="auth()->user()->hasAvatar() ? auth()->user()->getAvatarUrl('small') : null"
-                                :firstname="auth()->user()->userDetail->firstname ?? null"
-                                :lastname="auth()->user()->userDetail->lastname ?? null"
-                                :nickname="auth()->user()->nickname"
-                                :display-mode="auth()->user()->userDetail->getAvatarDisplayMode()"
-                                size="48" />
+                            @if(auth()->user()->hasAvatar())
+                                <img src="{{ auth()->user()->getAvatarUrl('small') }}" alt="Avatar" class="rounded-circle me-2" style="width: 48px; height: 48px; object-fit: cover;">
+                            @else
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 48px; height: 48px;">
+                                    <span>{{ strtoupper(substr(auth()->user()->nickname, 0, 2)) }}</span>
+                                </div>
+                            @endif
                             <div class="ms-1">
                                 @php
-                                $countryFlag = auth()->user()->userDetail->country_flag ?? 'de_DE';
+                                $countryFlag = auth()->user()->userDetail?->country_flag ?? 'de_DE';
                                 $flagCode = getFlagCode($countryFlag);
                                 @endphp
                                 <span class="fi fi-{{ $flagCode }} text-2xl"></span>

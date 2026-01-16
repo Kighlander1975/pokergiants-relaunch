@@ -12,7 +12,10 @@ class SectionsSeeder extends Seeder
      */
     public function run(): void
     {
-        $sections = ['home', 'news', 'tournaments'];
+        // Entferne unerwünschte Sections
+        \App\Models\Section::whereNotIn('section_name', ['home'])->delete();
+
+        $sections = ['home'];
 
         foreach ($sections as $sectionName) {
             $section = \App\Models\Section::firstOrCreate(['section_name' => $sectionName]);

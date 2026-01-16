@@ -13,7 +13,76 @@ const safeParseJson = (value) => {
     }
 };
 
+const generateSuggestions = (issue) => {
+    if (!issue) {
+        return [];
+    }
+
+    const suggestions = [];
+
+    if (issue.type === "missingClosing") {
+        if (issue.tag) {
+            suggestions.push({
+                title: `Füge [/${issue.tag}] hinzu`,
+                description: "Ergänzt das fehlende Ende am Textende.",
+                action: {
+                    type: "append",
+                    text: `[/${issue.tag}]`,
+                },
+            });
+        }
+        if (typeof issue.openStart === "number") {
+            suggestions.push({
+                title: `Entferne [${issue.tag}]`,
+                description:
+                    "Löscht die offene Eröffnung, wenn sie nicht gebraucht wird.",
+                action: {
+                    type: "remove",
+                    start: issue.openStart,
+                    end: issue.openStart + (issue.openLength ?? 0),
+                },
+            });
+        }
+    } else if (issue.type === "unexpectedClosing") {
+        if (issue.expected) {
+            suggestions.push({
+                title: `Schließe [/${issue.expected}] zuerst`,
+                description: `Fügt [/${issue.expected}] direkt vor [/${issue.tag}] ein.`,
+                action: {
+                    type: "insert",
+                    text: `[/${issue.expected}]`,
+                    position: issue.matchStart,
+                },
+            });
+        }
+        if (issue.tag) {
+            suggestions.push({
+                title: `Entferne [/${issue.tag}]`,
+                description:
+                    "Löscht den fehlerhaften Tag und lässt den Rest unberührt.",
+                action: {
+                    type: "remove",
+                    start: issue.matchStart,
+                    end: issue.matchStart + (issue.matchLength ?? 0),
+                },
+            });
+            suggestions.push({
+                title: `Ergänze [${issue.tag}]`,
+                description: "Wenn die Öffnung fehlt, wird sie hier eingefügt.",
+                action: {
+                    type: "insert",
+                    text: `[${issue.tag}]`,
+                    position: issue.matchStart,
+                },
+            });
+        }
+    }
+
+    return suggestions.slice(0, 4);
+};
+
 const initNewsEditor = () => {
+    // Check if news editor elements exist
     const editor = document.getElementById("news-content");
     if (!editor) {
         return;
@@ -230,75 +299,6 @@ const initNewsEditor = () => {
             .join("");
     };
 
-    const generateSuggestions = (issue) => {
-        if (!issue) {
-            return [];
-        }
-
-        const suggestions = [];
-
-        if (issue.type === "missingClosing") {
-            if (issue.tag) {
-                suggestions.push({
-                    title: `Füge [/${issue.tag}] hinzu`,
-                    description: "Ergänzt das fehlende Ende am Textende.",
-                    action: {
-                        type: "append",
-                        text: `[/${issue.tag}]`,
-                    },
-                });
-            }
-            if (typeof issue.openStart === "number") {
-                suggestions.push({
-                    title: `Entferne [${issue.tag}]`,
-                    description:
-                        "Löscht die offene Eröffnung, wenn sie nicht gebraucht wird.",
-                    action: {
-                        type: "remove",
-                        start: issue.openStart,
-                        end: issue.openStart + (issue.openLength ?? 0),
-                    },
-                });
-            }
-        } else if (issue.type === "unexpectedClosing") {
-            if (issue.expected) {
-                suggestions.push({
-                    title: `Schließe [/${issue.expected}] zuerst`,
-                    description: `Fügt [/${issue.expected}] direkt vor [/${issue.tag}] ein.`,
-                    action: {
-                        type: "insert",
-                        text: `[/${issue.expected}]`,
-                        position: issue.matchStart,
-                    },
-                });
-            }
-            if (issue.tag) {
-                suggestions.push({
-                    title: `Entferne [/${issue.tag}]`,
-                    description:
-                        "Löscht den fehlerhaften Tag und lässt den Rest unberührt.",
-                    action: {
-                        type: "remove",
-                        start: issue.matchStart,
-                        end: issue.matchStart + (issue.matchLength ?? 0),
-                    },
-                });
-                suggestions.push({
-                    title: `Ergänze [${issue.tag}]`,
-                    description:
-                        "Wenn die Öffnung fehlt, wird sie hier eingefügt.",
-                    action: {
-                        type: "insert",
-                        text: `[${issue.tag}]`,
-                        position: issue.matchStart,
-                    },
-                });
-            }
-        }
-
-        return suggestions.slice(0, 4);
-    };
-
     const applySuggestionAction = (action) => {
         if (!action) {
             return;
@@ -426,11 +426,7 @@ const initNewsEditor = () => {
     document.querySelectorAll("[data-bb-tag]").forEach((button) => {
         button.addEventListener("click", () => {
             const tag = button.dataset.bbTag;
-            const selection = editor.value.substring(
-                editor.selectionStart,
-                editor.selectionEnd
-            );
-            insertSnippet(`[${tag}]${selection}[/${tag}]`);
+            bbEditor.insertTag(tag);
         });
     });
 
@@ -583,4 +579,293 @@ const initNewsEditor = () => {
     updateIconPreviewFromInput();
 };
 
-document.addEventListener("DOMContentLoaded", initNewsEditor);
+const initPlainEditor = () => {
+    const editor = document.getElementById("plain-content");
+    if (!editor) {
+        return;
+    }
+
+    // Initialize BBEditor with toolbar disabled since we have custom toolbar
+    const bbEditor = new BBEditor(editor, {
+        mode: "full",
+        enableToolbar: false,
+        enableCounter: false, // We have custom counter
+        enablePreview: false, // We have custom preview
+    });
+
+    const counter = document.getElementById("plain-content-count");
+    const warningEl = document.getElementById("plain-bb-warning");
+    const suggestionsWrapper = document.getElementById("plain-bb-suggestions");
+    const suggestionsList = document.getElementById(
+        "plain-bb-suggestions-list"
+    );
+    let latestSuggestions = [];
+
+    // Update counter
+    const updateCounter = () => {
+        if (counter) {
+            counter.textContent = editor.value.length;
+        }
+    };
+
+    // Validate BB code and show warnings/suggestions
+    const validateAndSuggest = () => {
+        const content = editor.value;
+        const validation = validateBBCode(content);
+
+        // Show/hide warning
+        if (warningEl) {
+            if (!validation.valid) {
+                warningEl.textContent = validation.message;
+                warningEl.classList.remove("hidden");
+            } else {
+                warningEl.classList.add("hidden");
+            }
+        }
+
+        // Show/hide suggestions
+        if (suggestionsWrapper && suggestionsList) {
+            if (validation.issue) {
+                const rawSuggestions = generateSuggestions(validation.issue);
+                const suggestions = rawSuggestions.map((suggestion) => {
+                    let code = editor.value;
+                    if (suggestion.action) {
+                        if (suggestion.action.type === "append") {
+                            code += suggestion.action.text;
+                        } else if (suggestion.action.type === "remove") {
+                            code =
+                                code.substring(0, suggestion.action.start) +
+                                code.substring(suggestion.action.end);
+                        } else if (suggestion.action.type === "insert") {
+                            code =
+                                code.substring(0, suggestion.action.position) +
+                                suggestion.action.text +
+                                code.substring(suggestion.action.position);
+                        }
+                    }
+                    return {
+                        label: suggestion.title,
+                        code,
+                    };
+                });
+                suggestionsList.innerHTML = "";
+                suggestions.forEach((suggestion) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "news-bb-suggestions__item";
+                    button.textContent = suggestion.label;
+                    button.addEventListener("click", () => {
+                        editor.value = suggestion.code;
+                        updateCounter();
+                        validateAndSuggest();
+                    });
+                    suggestionsList.appendChild(button);
+                });
+                suggestionsWrapper.classList.remove("hidden");
+                latestSuggestions = suggestions;
+            } else {
+                suggestionsWrapper.classList.add("hidden");
+                latestSuggestions = [];
+            }
+        }
+    };
+
+    // Event listeners
+    editor.addEventListener("input", () => {
+        updateCounter();
+        validateAndSuggest();
+    });
+
+    // Toolbar button handlers
+    const toolbar = editor
+        .closest(".tab-content")
+        ?.querySelector(".news-editor-toolbar");
+    if (toolbar) {
+        // Undo/Redo
+        toolbar
+            .querySelector("[data-bb-undo]")
+            ?.addEventListener("click", () => bbEditor.undo());
+        toolbar
+            .querySelector("[data-bb-redo]")
+            ?.addEventListener("click", () => bbEditor.redo());
+
+        // Tag buttons
+        toolbar.querySelectorAll("[data-bb-tag]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const tag = btn.getAttribute("data-bb-tag");
+                bbEditor.insertTag(tag);
+            });
+        });
+
+        // Heading buttons
+        toolbar.querySelectorAll("[data-bb-heading]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const level = btn.getAttribute("data-bb-heading");
+                bbEditor.insertHeading(level);
+            });
+        });
+
+        // Align buttons
+        toolbar.querySelectorAll("[data-bb-align]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const align = btn.getAttribute("data-bb-align");
+                bbEditor.insertAlign(align);
+            });
+        });
+
+        // Link button
+        toolbar
+            .querySelector("[data-bb-link]")
+            ?.addEventListener("click", () => {
+                const url = window.prompt("Gib die URL ein:");
+                if (url) {
+                    const text = window.prompt(
+                        "Gib den Link-Text ein:",
+                        "Link"
+                    );
+                    if (text) {
+                        bbEditor.insertLink(url, text);
+                    }
+                }
+            });
+
+        // Suit buttons
+        toolbar.querySelectorAll("[data-bb-suit]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const suit = btn.getAttribute("data-bb-suit");
+                bbEditor.insertSuit(suit);
+            });
+        });
+
+        // Icon picker
+        const iconValueInput = document.getElementById("plain-icon-value");
+        const iconPreviewIcon = document.getElementById(
+            "plain-icon-preview-icon"
+        );
+        const iconPreviewLabel = document.getElementById("plain-icon-preview");
+
+        const updateIconPreviewFromInput = () => {
+            if (!iconValueInput || !iconPreviewIcon || !iconPreviewLabel)
+                return;
+
+            const iconName = iconValueInput.value?.trim();
+            if (iconName) {
+                iconPreviewIcon.className = `fas fa-${iconName}`;
+                iconPreviewLabel.textContent = iconName;
+            } else {
+                iconPreviewIcon.className = "fas fa-circle";
+                iconPreviewLabel.textContent = "kein Icon gewählt";
+            }
+        };
+
+        // Icon picker modal
+        const iconModal = document.getElementById("plain-icon-modal");
+        const openIconModalBtn = document.getElementById("openPlainIconModal");
+
+        if (openIconModalBtn && iconModal) {
+            openIconModalBtn.addEventListener("click", () => {
+                iconModal.classList.remove("hidden");
+                openIconModalBtn.setAttribute("aria-expanded", "true");
+            });
+
+            // Close modal handlers
+            const closeIconModal = () => {
+                iconModal.classList.add("hidden");
+                openIconModalBtn.setAttribute("aria-expanded", "false");
+            };
+
+            iconModal.querySelectorAll("[data-close-modal]").forEach((btn) => {
+                btn.addEventListener("click", closeIconModal);
+            });
+
+            iconModal.addEventListener("click", (e) => {
+                if (e.target === iconModal) {
+                    closeIconModal();
+                }
+            });
+
+            // Icon selection
+            iconModal.querySelectorAll("[data-icon]").forEach((iconBtn) => {
+                iconBtn.addEventListener("click", () => {
+                    const iconName = iconBtn.getAttribute("data-icon");
+                    if (iconValueInput) {
+                        iconValueInput.value = iconName;
+                    }
+                    updateIconPreviewFromInput();
+                    closeIconModal();
+                });
+            });
+        }
+
+        // Insert icon button
+        toolbar
+            .querySelector("[data-bb-icon]")
+            ?.addEventListener("click", () => {
+                const iconName = iconValueInput?.value?.trim();
+                if (!iconName) {
+                    window.alert(
+                        "Bitte wähle ein Icon aus, bevor du es einfügst."
+                    );
+                    return;
+                }
+
+                bbEditor.insertSnippet(`[icon=${iconName}]`);
+            });
+
+        updateIconPreviewFromInput();
+    }
+
+    // Preview modal
+    const previewModal = document.getElementById("plain-preview-modal");
+    const openPreviewBtn = document.getElementById("openPlainPreview");
+
+    if (previewModal && openPreviewBtn) {
+        const previewBodyEl = previewModal.querySelector(
+            "#plain-preview-content"
+        );
+
+        openPreviewBtn.addEventListener("click", () => {
+            if (previewBodyEl) {
+                previewBodyEl.innerHTML = convertBBToPreviewHtml(editor.value);
+            }
+            previewModal.classList.remove("hidden");
+        });
+
+        // Close modal handlers
+        const closePreviewModal = () => {
+            previewModal.classList.add("hidden");
+        };
+
+        previewModal.querySelectorAll("[data-close-modal]").forEach((btn) => {
+            btn.addEventListener("click", closePreviewModal);
+        });
+
+        previewModal.addEventListener("click", (e) => {
+            if (e.target === previewModal) {
+                closePreviewModal();
+            }
+        });
+    }
+
+    // Initial setup
+    updateCounter();
+    validateAndSuggest();
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    initNewsEditor();
+    initPlainEditor();
+    // Listen for tab activation events
+    document.addEventListener("tabActivated", (event) => {
+        const { tabName } = event.detail;
+        if (tabName === "plain") {
+            setTimeout(() => initPlainEditor(), 10);
+        } else if (tabName === "news") {
+            setTimeout(() => initNewsEditor(), 10);
+        }
+    });
+});
+
+// Export functions globally for tab switching
+window.initNewsEditor = initNewsEditor;
+window.initPlainEditor = initPlainEditor;

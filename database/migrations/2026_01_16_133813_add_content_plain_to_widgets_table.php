@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user_details', function (Blueprint $table) {
-            if (!Schema::hasColumn('user_details', 'created_at')) {
-                $table->timestamp('created_at')->nullable();
-            }
+        Schema::table('widgets', function (Blueprint $table) {
+            $table->text('content_plain')->nullable()->after('content_html');
         });
     }
 
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('user_details', function (Blueprint $table) {
-            $table->dropColumn('created_at');
+        Schema::table('widgets', function (Blueprint $table) {
+            $table->dropColumn('content_plain');
         });
     }
 };

@@ -55,6 +55,22 @@ export const convertBBToPreviewHtml = (raw) => {
             const color = ["heart", "diamond"].includes(type) ? "red" : "black";
             return `<span class="suit suit-${type} suit-${color}">${symbol}</span>`;
         })
+        .replace(/\[ul\]([\s\S]*?)\[\/ul\]/gi, (match, content) => {
+            const listItems = content
+                .split(/\[\*\]/)
+                .filter((item) => item.trim())
+                .map((item) => `<li>${item.trim()}</li>`)
+                .join("");
+            return `<ul>${listItems}</ul>`;
+        })
+        .replace(/\[ol\]([\s\S]*?)\[\/ol\]/gi, (match, content) => {
+            const listItems = content
+                .split(/\[\*\]/)
+                .filter((item) => item.trim())
+                .map((item) => `<li>${item.trim()}</li>`)
+                .join("");
+            return `<ol>${listItems}</ol>`;
+        })
         .replace(/\n/g, "<br>");
 
     return html.trim() || '<span class="text-gray-500">(kein Inhalt)</span>';
@@ -74,6 +90,8 @@ export const getAvailableTags = () => [
     "url",
     "icon",
     "suit",
+    "ul",
+    "ol",
 ];
 
 export const validateBBCode = (content) => {

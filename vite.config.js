@@ -9,6 +9,7 @@ export default defineConfig({
                 "resources/js/app.js",
                 "resources/js/admin/users-filters.js",
                 "resources/js/admin/news-editor.js",
+                "resources/js/admin/widget-editor.js",
             ],
             refresh: true,
         }),

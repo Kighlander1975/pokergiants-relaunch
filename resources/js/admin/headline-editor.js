@@ -8,11 +8,17 @@ const initHeadlineEditor = () => {
         return;
     }
 
-    console.log("Initializing headline editor...");
-    isInitialized = true;
-    // Initialize editors for both headline_text and subline_text
+    // Check if headline elements exist on this page
     const headlineEditor = document.getElementById("headline_text");
     const sublineEditor = document.getElementById("subline_text");
+
+    if (!headlineEditor && !sublineEditor) {
+        // No headline elements found - silently skip initialization
+        return;
+    }
+
+    console.log("Initializing headline editor...");
+    isInitialized = true;
 
     if (headlineEditor) {
         console.log("Found headline editor");

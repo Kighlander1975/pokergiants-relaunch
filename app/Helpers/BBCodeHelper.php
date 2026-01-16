@@ -68,6 +68,35 @@ if (!function_exists('convertBBToHtml')) {
             $html
         );
 
+        // Lists
+        $html = preg_replace_callback(
+            '/\[ul\](.*?)\[\/ul\]/si',
+            function ($matches) {
+                $content = $matches[1];
+                $listItems = array_filter(array_map('trim', explode('[*]', $content)));
+                $listHtml = '';
+                foreach ($listItems as $item) {
+                    $listHtml .= '<li>' . $item . '</li>';
+                }
+                return '<ul>' . $listHtml . '</ul>';
+            },
+            $html
+        );
+
+        $html = preg_replace_callback(
+            '/\[ol\](.*?)\[\/ol\]/si',
+            function ($matches) {
+                $content = $matches[1];
+                $listItems = array_filter(array_map('trim', explode('[*]', $content)));
+                $listHtml = '';
+                foreach ($listItems as $item) {
+                    $listHtml .= '<li>' . $item . '</li>';
+                }
+                return '<ol>' . $listHtml . '</ol>';
+            },
+            $html
+        );
+
         // Line breaks
         $html = str_replace("\n", "<br>", $html);
 

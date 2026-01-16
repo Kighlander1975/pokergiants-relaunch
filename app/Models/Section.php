@@ -14,4 +14,9 @@ class Section extends Model
     {
         return $this->hasOne(Headline::class, 'section_id');
     }
+
+    public function widgets()
+    {
+        return $this->hasMany(Widget::class, 'section_id');
+    }
 }

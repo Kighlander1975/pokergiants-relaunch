@@ -135,8 +135,14 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAvatarUrl(string $conversion = ''): string
     {
+        // Zuerst Media Library prüfen
         if ($this->userDetail && $this->userDetail->hasMedia('avatar')) {
             return $this->userDetail->getFirstMediaUrl('avatar', $conversion);
+        }
+
+        // Fallback auf avatar_image_filename Feld
+        if ($this->userDetail && $this->userDetail->avatar_image_filename) {
+            return asset('storage/avatars/' . $this->userDetail->avatar_image_filename);
         }
 
         return asset('images/default-avatar.png'); // Fallback
@@ -149,6 +155,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function hasAvatar(): bool
     {
-        return $this->userDetail && $this->userDetail->hasMedia('avatar');
+        // Media Library prüfen
+        if ($this->userDetail && $this->userDetail->hasMedia('avatar')) {
+            return true;
+        }
+
+        // avatar_image_filename Feld prüfen
+        return $this->userDetail && !empty($this->userDetail->avatar_image_filename);
     }
 }

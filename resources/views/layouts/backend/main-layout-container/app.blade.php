@@ -21,7 +21,7 @@
 <body class="antialiased backend-body"
       data-headlines-routes="{{ \App\Models\Section::whereHas('headline')->pluck('section_name')->toJson() }}"
       data-views-routes="{{ \App\Models\Section::pluck('section_name')->toJson() }}"
-      data-current-section="{{ request()->route('section') ? request()->route('section')->section_name : (request()->route('headline') ? request()->route('headline')->section->section_name : (request()->get('section') ?: '')) }}"
+      data-current-section="{{ request()->route('section') ?: (request()->route('headline') ? request()->route('headline')->section->section_name : (request()->get('section') ?: '')) }}"
       data-current-area="{{ request()->routeIs('admin.headlines.*') ? 'headlines' : (request()->routeIs('admin.widgets.*') ? 'widgets' : '') }}">
     <div class="min-h-screen bg-gray-100 flex">
         <!-- Sidebar -->
@@ -135,16 +135,28 @@
                                         </svg>
                                     </button>
                                     <div class="sidebar-dropdown-content hidden pl-4">
-                                        <a href="{{ route('admin.widgets.create', ['section' => 'home']) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                        <a href="{{ route('admin.widgets.index', 'home') }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.widgets.index') && request()->route('section') === 'home' ? 'bg-gray-700 text-white' : '' }}">
+                                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                            <span class="sidebar-text">Übersicht</span>
+                                        </a>
+                                        <a href="{{ route('admin.widgets.create', ['section' => 'home']) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.widgets.create') && request()->route('section') === 'home' ? 'bg-gray-700 text-white' : '' }}">
                                             <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                             </svg>
                                             <span class="sidebar-text">Neues Widget</span>
                                         </a>
-                                        {{-- Placeholder for dynamic widget list --}}
-                                        <div class="px-4 py-2 text-gray-500 text-sm sidebar-text">
-                                            Widgets werden hier aufgelistet
-                                        </div>
+                                        @if($homeSection)
+                                            @foreach($homeSection->widgets()->ordered()->get() as $widget)
+                                            <a href="{{ route('admin.widgets.edit', ['home', $widget]) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.widgets.edit') && request()->route('widget')?->id == $widget->id ? 'bg-gray-700 text-white' : '' }}">
+                                                <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                                </svg>
+                                                <span class="sidebar-text">{{ $widget->internal_name ?: 'Widget #' . $widget->id }}</span>
+                                            </a>
+                                            @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -182,16 +194,26 @@
                                         </svg>
                                     </button>
                                     <div class="sidebar-dropdown-content hidden pl-4">
-                                        <a href="{{ route('admin.widgets.create', ['section' => $section->section_name]) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                        <a href="{{ route('admin.widgets.index', $section->section_name) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.widgets.index') && request()->route('section') === $section->section_name ? 'bg-gray-700 text-white' : '' }}">
+                                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                            <span class="sidebar-text">Übersicht</span>
+                                        </a>
+                                        <a href="{{ route('admin.widgets.create', ['section' => $section->section_name]) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.widgets.create') && request()->route('section') === $section->section_name ? 'bg-gray-700 text-white' : '' }}">
                                             <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                             </svg>
                                             <span class="sidebar-text">Neues Widget</span>
                                         </a>
-                                        {{-- Placeholder for dynamic widget list --}}
-                                        <div class="px-4 py-2 text-gray-500 text-sm sidebar-text">
-                                            Widgets werden hier aufgelistet
-                                        </div>
+                                        @foreach($section->widgets()->ordered()->get() as $widget)
+                                        <a href="{{ route('admin.widgets.edit', [$section->section_name, $widget]) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.widgets.edit') && request()->route('widget')?->id == $widget->id ? 'bg-gray-700 text-white' : '' }}">
+                                            <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                            </svg>
+                                            <span class="sidebar-text">{{ $widget->internal_name ?: 'Widget #' . $widget->id }}</span>
+                                        </a>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>

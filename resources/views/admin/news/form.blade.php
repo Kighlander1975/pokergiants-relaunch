@@ -9,6 +9,8 @@ $bbTagButtons = [
 ['tag' => 'b', 'icon' => 'bold', 'label' => 'Fett'],
 ['tag' => 'i', 'icon' => 'italic', 'label' => 'Kursiv'],
 ['tag' => 'u', 'icon' => 'underline', 'label' => 'Unterstrichen'],
+['tag' => 'ul', 'icon' => 'list-ul', 'label' => 'Ungeordnete Liste'],
+['tag' => 'ol', 'icon' => 'list-ol', 'label' => 'Geordnete Liste'],
 ['tag' => 'p', 'icon' => 'paragraph', 'label' => 'Absatz'],
 ['tag' => 'hr', 'icon' => 'minus', 'label' => 'Trennlinie'],
 ];
@@ -112,7 +114,7 @@ $bbSuitButtons = [
             </div>
             <div class="toolbar-group">
                 @foreach($bbTagButtons as $button)
-                <button type="button" class="toolbar-btn" data-bb-tag="{{ $button['tag'] }}" aria-label="{{ $button['label'] }}">
+                <button type="button" class="toolbar-btn" data-bb-tag="{{ $button['tag'] }}" aria-label="{{ $button['label'] }}" title="{{ $button['label'] }}">
                     <i class="fas fa-{{ $button['icon'] }}" aria-hidden="true"></i>
                     <span class="sr-only">{{ $button['label'] }}</span>
                 </button>
@@ -120,7 +122,7 @@ $bbSuitButtons = [
             </div>
             <div class="toolbar-group">
                 @foreach($bbHeadingButtons as $heading)
-                <button type="button" class="toolbar-btn" data-bb-heading="{{ $heading['level'] }}" aria-label="{{ $heading['label'] }}">
+                <button type="button" class="toolbar-btn" data-bb-heading="{{ $heading['level'] }}" aria-label="{{ $heading['label'] }}" title="{{ $heading['label'] }}">
                     <span class="heading-label">{{ $heading['label'] }}</span>
                 </button>
                 @endforeach

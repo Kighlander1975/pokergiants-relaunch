@@ -48,6 +48,27 @@ class BBCodeRenderer
         // Heading Tags
         $html = preg_replace('/\[h([1-6])\](.*?)\[\/h[1-6]\]/is', '<h$1>$2</h$1>', $html);
 
+        // List Tags
+        $html = preg_replace_callback('/\[ul\](.*?)\[\/ul\]/is', function ($matches) {
+            $content = $matches[1];
+            $listItems = array_filter(array_map('trim', explode('[*]', $content)));
+            $listHtml = '';
+            foreach ($listItems as $item) {
+                $listHtml .= '<li>' . $item . '</li>';
+            }
+            return '<ul>' . $listHtml . '</ul>';
+        }, $html);
+
+        $html = preg_replace_callback('/\[ol\](.*?)\[\/ol\]/is', function ($matches) {
+            $content = $matches[1];
+            $listItems = array_filter(array_map('trim', explode('[*]', $content)));
+            $listHtml = '';
+            foreach ($listItems as $item) {
+                $listHtml .= '<li>' . $item . '</li>';
+            }
+            return '<ol>' . $listHtml . '</ol>';
+        }, $html);
+
         // Zeilenumbrüche
         $html = nl2br($html);
 

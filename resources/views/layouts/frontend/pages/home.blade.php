@@ -13,33 +13,9 @@
 @endsection
 
 @section('content-body')
-<div class="glass-card">
-    <h2 class="text-center">Neuigkeiten</h2>
-    <p>Hier findest du die neuesten Updates und Ankündigungen rund um Pokergiants.de.</p>
-    <ul>
-        <li>Feature 1: Beschreibung des Features 1.</li>
-        <li>Feature 2: Beschreibung des Features 2.</li>
-        <li>Feature 3: Beschreibung des Features 3.</li>
-    </ul>
+@foreach($widgets as $widget)
+<div class="{{ $widget->css_classes }}">
+{!! $widget->content_html !!}
 </div>
-<div class="glass-card">
-    <h2 class="text-center">Termine</h2>
-    <p>Hier findest du die neuesten Termine der Pokergiants.de Turniere.</p>
-        <ul>
-            <li>Feature 1: Beschreibung des Features 1.</li>
-            <li>Feature 2: Beschreibung des Features 2.</li>
-            <li>Feature 3: Beschreibung des Features 3.</li>
-        </ul>
-</div>
-<div class="glass-card one-card one-card-75">
-    <h2 class="text-center">Zweite Karte</h2>
-    <p>Test für Breite.</p>
-</div>
-<div class="glass-card card-66 center-on-small">
-    <h2>Dritte Card</h2>
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aut deserunt, blanditiis reprehenderit cum asperiores esse vitae in debitis pariatur, voluptatem aspernatur eum nesciunt. Cum modi odit, tempora exercitationem atque quos. Adipisci dolorum doloribus tempora cum illo veniam commodi deserunt ea impedit ad aliquam unde culpa consectetur numquam, qui cumque provident.</p>
-</div>
-<div class="glass-card card-33">
-    <h3>Vierte Card</h3>
-</div>
+@endforeach
 @endsection

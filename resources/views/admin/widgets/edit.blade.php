@@ -1,6 +1,6 @@
 @extends('layouts.backend.main-layout-container.app')
 
-@section('title', 'Neues Widget erstellen')
+@section('title', 'Widget bearbeiten: ' . ($widget->internal_name ?: 'Widget #' . $widget->id))
 
 @push('styles')
 @vite('resources/css/backend/news-editor.css')
@@ -45,20 +45,21 @@ $bbSuitButtons = [
 @section('content-body')
 <div class="py-12">
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-        <form method="POST" action="{{ route('admin.widgets.store', $sectionModel->section_name) }}" class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <form method="POST" action="{{ route('admin.widgets.update', [$widget->section->section_name, $widget]) }}" class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             @csrf
+            @method('PATCH')
 
             <div class="p-6 space-y-6">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-900">
-                        Neues Widget für Section: {{ ucfirst($sectionModel->section_name) }}
+                        Widget bearbeiten: {{ $widget->internal_name ?: 'Widget #' . $widget->id }}
                     </h3>
                     <div class="flex space-x-3">
-                        <a href="{{ route('admin.widgets.index', $sectionModel->section_name) }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">
+                        <a href="{{ route('admin.widgets.index', $widget->section->section_name) }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">
                             Zurück zur Übersicht
                         </a>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                            Widget erstellen
+                            Speichern
                         </button>
                     </div>
                 </div>
@@ -69,7 +70,7 @@ $bbSuitButtons = [
                         Interner Name <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="internal_name" id="internal_name"
-                           value="{{ old('internal_name') }}"
+                           value="{{ old('internal_name', $widget->internal_name) }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                            placeholder="z.B. news, events, hero-banner"
                            required>
@@ -89,7 +90,7 @@ $bbSuitButtons = [
                     <div class="space-y-2">
                         <div class="flex items-center">
                             <input type="radio" name="widget_type" id="type_card" value="card"
-                                   {{ old('widget_type', 'card') === 'card' ? 'checked' : '' }}
+                                   {{ old('widget_type', $widget->widget_type) === 'card' ? 'checked' : '' }}
                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                             <label for="type_card" class="ml-2 block text-sm text-gray-900">
                                 <strong>Card</strong> - Grid-Layout, teilt sich die Reihe mit anderen Cards
@@ -97,7 +98,7 @@ $bbSuitButtons = [
                         </div>
                         <div class="flex items-center">
                             <input type="radio" name="widget_type" id="type_one_card" value="one-card"
-                                   {{ old('widget_type') === 'one-card' ? 'checked' : '' }}
+                                   {{ old('widget_type', $widget->widget_type) === 'one-card' ? 'checked' : '' }}
                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                             <label for="type_one_card" class="ml-2 block text-sm text-gray-900">
                                 <strong>One-Card</strong> - Nimmt die gesamte Reihe ein
@@ -116,11 +117,11 @@ $bbSuitButtons = [
                     </label>
                     <select name="width_percentage" id="width_percentage"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="" {{ old('width_percentage', '') === '' ? 'selected' : '' }}>
+                        <option value="" {{ old('width_percentage', $widget->width_percentage) === '' || old('width_percentage', $widget->width_percentage) === null ? 'selected' : '' }}>
                             Default (auto ~25%)
                         </option>
                         @foreach([10, 25, 33, 50, 66, 75, 100] as $width)
-                            <option value="{{ $width }}" {{ old('width_percentage') == $width ? 'selected' : '' }}>
+                            <option value="{{ $width }}" {{ old('width_percentage', $widget->width_percentage) == $width ? 'selected' : '' }}>
                                 {{ $width }}%
                             </option>
                         @endforeach
@@ -136,7 +137,7 @@ $bbSuitButtons = [
                 <!-- Center on Small -->
                 <div class="flex items-center">
                     <input type="checkbox" name="center_on_small" id="center_on_small" value="1"
-                           {{ old('center_on_small') ? 'checked' : '' }}
+                           {{ old('center_on_small', $widget->center_on_small) ? 'checked' : '' }}
                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <label for="center_on_small" class="ml-2 block text-sm text-gray-900">
                         Auf kleinen Displays zentrieren (< 390px)
@@ -150,36 +151,36 @@ $bbSuitButtons = [
                     </label>
 
                     <!-- Hidden Content Type Field -->
-                    <input type="hidden" name="content_type" id="content_type" value="html">
+                    <input type="hidden" name="content_type" id="content_type" value="{{ old('content_type', $widget->content_type ?? 'html') }}">
 
                     <!-- Tab Navigation -->
                     <div class="mb-4">
                         <nav class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-                            <button type="button" id="tab-html" class="tab-button active flex-1 py-2 px-4 text-sm font-medium text-center rounded-md transition-colors duration-200"
+                            <button type="button" id="tab-html" class="tab-button {{ ($widget->content_type ?? 'html') === 'html' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md transition-colors duration-200"
                                     data-tab="html">
                                 HTML
                             </button>
-                            <button type="button" id="tab-plain" class="tab-button flex-1 py-2 px-4 text-sm font-medium text-center text-gray-500 rounded-md hover:text-gray-700 transition-colors duration-200"
+                            <button type="button" id="tab-plain" class="tab-button {{ ($widget->content_type ?? 'html') === 'plain' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md hover:text-gray-700 transition-colors duration-200"
                                     data-tab="plain">
                                 Plain
                             </button>
-                            <button type="button" id="tab-news" class="tab-button flex-1 py-2 px-4 text-sm font-medium text-center text-gray-500 rounded-md hover:text-gray-700 transition-colors duration-200"
+                            <button type="button" id="tab-news" class="tab-button {{ ($widget->content_type ?? 'html') === 'news' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md hover:text-gray-700 transition-colors duration-200"
                                     data-tab="news">
                                 News
                             </button>
-                            <button type="button" id="tab-events" class="tab-button flex-1 py-2 px-4 text-sm font-medium text-center text-gray-500 rounded-md hover:text-gray-700 transition-colors duration-200"
+                            <button type="button" id="tab-events" class="tab-button {{ ($widget->content_type ?? 'html') === 'events' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md hover:text-gray-700 transition-colors duration-200"
                                     data-tab="events">
                                 Events
                             </button>
-                            <button type="button" id="tab-gallery" class="tab-button flex-1 py-2 px-4 text-sm font-medium text-center text-gray-500 rounded-md hover:text-gray-700 transition-colors duration-200"
+                            <button type="button" id="tab-gallery" class="tab-button {{ ($widget->content_type ?? 'html') === 'gallery' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md hover:text-gray-700 transition-colors duration-200"
                                     data-tab="gallery">
                                 Gallery
                             </button>
-                            <button type="button" id="tab-stats" class="tab-button flex-1 py-2 px-4 text-sm font-medium text-center text-gray-500 rounded-md hover:text-gray-700 transition-colors duration-200"
+                            <button type="button" id="tab-stats" class="tab-button {{ ($widget->content_type ?? 'html') === 'stats' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md hover:text-gray-700 transition-colors duration-200"
                                     data-tab="stats">
                                 Stats
                             </button>
-                            <button type="button" id="tab-custom" class="tab-button flex-1 py-2 px-4 text-sm font-medium text-center text-gray-500 rounded-md hover:text-gray-700 transition-colors duration-200"
+                            <button type="button" id="tab-custom" class="tab-button {{ ($widget->content_type ?? 'html') === 'custom' ? 'active bg-white text-gray-900 shadow-sm' : 'text-gray-500' }} flex-1 py-2 px-4 text-sm font-medium text-center rounded-md hover:text-gray-700 transition-colors duration-200"
                                     data-tab="custom">
                                 Custom
                             </button>
@@ -189,7 +190,7 @@ $bbSuitButtons = [
                     <!-- Tab Content -->
                     <div class="space-y-4">
                         <!-- HTML Tab -->
-                        <div id="content-html" class="tab-content">
+                        <div id="content-html" class="tab-content {{ ($widget->content_type ?? 'html') === 'html' ? '' : 'hidden' }}">
                             <label for="content_html" class="block text-sm font-medium text-gray-700 mb-2">
                                 HTML-Inhalt
                             </label>
@@ -205,7 +206,7 @@ $bbSuitButtons = [
         <li>List item</li>
     </ul>
 </div>"
-                                          style="tab-size: 4; white-space: pre; overflow-wrap: normal; overflow-x: auto;">{{ old('content_html') }}</textarea>
+                                          style="tab-size: 4; white-space: pre; overflow-wrap: normal; overflow-x: auto;">{{ old('content_html', $widget->content_html) }}</textarea>
 
                                 <!-- Code Formatting Helper -->
                                 <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
@@ -246,7 +247,7 @@ $bbSuitButtons = [
                         </div>
 
                         <!-- Plain Tab -->
-                        <div id="content-plain" class="tab-content hidden">
+                        <div id="content-plain" class="tab-content {{ ($widget->content_type ?? 'html') === 'plain' ? '' : 'hidden' }}">
                             <label for="content_plain" class="block text-sm font-medium text-gray-700 mb-2">
                                 Plain-Text-Inhalt (BB-Code Editor)
                             </label>
@@ -327,7 +328,7 @@ $bbSuitButtons = [
 
                             <textarea name="content_plain" id="plain-content" rows="10"
                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm leading-relaxed"
-                                      placeholder="Hier den BB-Code-Inhalt eingeben">{{ old('content_plain') }}</textarea>
+                                      placeholder="Hier den BB-Code-Inhalt eingeben">{{ old('content_plain', $widget->content_plain ?? '') }}</textarea>
 
                             <div class="flex flex-wrap items-center justify-between gap-3 mt-2">
                                 <p class="text-xs text-gray-500">{{ __('Zeichen:') }} <span id="plain-content-count">0</span></p>
@@ -418,7 +419,7 @@ $bbSuitButtons = [
                         </div>
 
                         <!-- News Tab -->
-                        <div id="content-news" class="tab-content hidden">
+                        <div id="content-news" class="tab-content {{ ($widget->content_type ?? 'html') === 'news' ? '' : 'hidden' }}">
                             <div class="text-center py-8 text-gray-500">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -429,7 +430,7 @@ $bbSuitButtons = [
                         </div>
 
                         <!-- Events Tab -->
-                        <div id="content-events" class="tab-content hidden">
+                        <div id="content-events" class="tab-content {{ ($widget->content_type ?? 'html') === 'events' ? '' : 'hidden' }}">
                             <div class="text-center py-8 text-gray-500">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -440,7 +441,7 @@ $bbSuitButtons = [
                         </div>
 
                         <!-- Gallery Tab -->
-                        <div id="content-gallery" class="tab-content hidden">
+                        <div id="content-gallery" class="tab-content {{ ($widget->content_type ?? 'html') === 'gallery' ? '' : 'hidden' }}">
                             <div class="text-center py-8 text-gray-500">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -451,7 +452,7 @@ $bbSuitButtons = [
                         </div>
 
                         <!-- Stats Tab -->
-                        <div id="content-stats" class="tab-content hidden">
+                        <div id="content-stats" class="tab-content {{ ($widget->content_type ?? 'html') === 'stats' ? '' : 'hidden' }}">
                             <div class="text-center py-8 text-gray-500">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -462,7 +463,7 @@ $bbSuitButtons = [
                         </div>
 
                         <!-- Custom Tab -->
-                        <div id="content-custom" class="tab-content hidden">
+                        <div id="content-custom" class="tab-content {{ ($widget->content_type ?? 'html') === 'custom' ? '' : 'hidden' }}">
                             <div class="text-center py-8 text-gray-500">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -482,7 +483,7 @@ $bbSuitButtons = [
                 <!-- Actions -->
                 <div class="flex items-center justify-end pt-6 border-t border-gray-200">
                     <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                        Widget erstellen
+                        Änderungen speichern
                     </button>
                 </div>
             </div>
@@ -490,168 +491,6 @@ $bbSuitButtons = [
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-    const contentTypeField = document.getElementById('content_type');
-
-    // Tab switching functionality
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabName = this.getAttribute('data-tab');
-
-            // Update hidden content_type field
-            contentTypeField.value = tabName;
-
-            // Remove active class from all buttons
-            tabButtons.forEach(btn => {
-                btn.classList.remove('active', 'bg-white', 'text-gray-900', 'shadow-sm');
-                btn.classList.add('text-gray-500');
-            });
-
-            // Add active class to clicked button
-            this.classList.add('active', 'bg-white', 'text-gray-900', 'shadow-sm');
-            this.classList.remove('text-gray-500');
-
-            // Hide all tab contents
-            tabContents.forEach(content => {
-                content.classList.add('hidden');
-            });
-
-            // Show selected tab content
-            const activeContent = document.getElementById('content-' + tabName);
-            if (activeContent) {
-                activeContent.classList.remove('hidden');
-            }
-        });
-    });
-
-    // HTML Editor enhancements
-    const htmlTextarea = document.getElementById('content_html');
-    const formatButton = document.getElementById('format-html');
-    const previewButton = document.getElementById('preview-html');
-    const previewModal = document.getElementById('html-preview-modal');
-    const previewContent = document.getElementById('html-preview-content');
-    const closePreview = document.getElementById('close-preview');
-
-    let isFirstFocus = true; // Flag to track first focus
-
-    // Format HTML function
-    function formatHTML(html) {
-        if (!html.trim()) return html;
-
-        // Basic HTML formatting - improve indentation
-        let formatted = html
-            .replace(/></g, '>\n<')  // Add line breaks between tags
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0)
-            .map((line, index, arr) => {
-                const indentLevel = getIndentLevel(line, arr, index);
-                return '    '.repeat(indentLevel) + line;
-            })
-            .join('\n');
-
-        return formatted;
-    }
-
-    function getIndentLevel(line, allLines, currentIndex) {
-        let level = 0;
-
-        // Count opening tags before this line
-        for (let i = 0; i < currentIndex; i++) {
-            const prevLine = allLines[i];
-            if (prevLine.includes('<') && !prevLine.includes('</') && !prevLine.includes('/>')) {
-                level++;
-            }
-            if (prevLine.includes('</')) {
-                level = Math.max(0, level - 1);
-            }
-        }
-
-        // Adjust for current line
-        if (line.includes('</')) {
-            level = Math.max(0, level - 1);
-        }
-
-        return level;
-    }
-
-    // Event listeners
-    if (htmlTextarea) {
-        htmlTextarea.addEventListener('focus', function() {
-            if (isFirstFocus && this.value.trim()) {
-                const formatted = formatHTML(this.value);
-                if (formatted !== this.value) {
-                    this.value = formatted;
-                }
-                isFirstFocus = false;
-            }
-        });
-    }
-
-    // Format button click
-    if (formatButton) {
-        formatButton.addEventListener('click', function() {
-            const currentValue = htmlTextarea.value;
-            const formatted = formatHTML(currentValue);
-            htmlTextarea.value = formatted;
-        });
-    }
-
-    // Preview button click
-    if (previewButton) {
-        previewButton.addEventListener('click', function() {
-            const htmlContent = htmlTextarea.value;
-            previewContent.innerHTML = htmlContent || '<p class="text-gray-500 italic">Keine Inhalte zum Anzeigen</p>';
-            previewModal.classList.remove('hidden');
-        });
-    }
-
-    // Close preview modal
-    if (closePreview) {
-        closePreview.addEventListener('click', function() {
-            previewModal.classList.add('hidden');
-        });
-    }
-
-    // Close modal when clicking outside
-    if (previewModal) {
-        previewModal.addEventListener('click', function(e) {
-            if (e.target === previewModal) {
-                previewModal.classList.add('hidden');
-            }
-        });
-    }
-
-    // Auto-format HTML content before form submission
-    const widgetForm = document.querySelector('form[method="POST"]');
-    if (widgetForm && htmlTextarea) {
-        widgetForm.addEventListener('submit', function(e) {
-            // Format HTML content before saving
-            if (htmlTextarea.value.trim()) {
-                htmlTextarea.value = formatHTML(htmlTextarea.value);
-            }
-        });
-    }
-
-    // Auto-indent on Tab key
-    if (htmlTextarea) {
-        htmlTextarea.addEventListener('keydown', function(e) {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                const start = this.selectionStart;
-                const end = this.selectionEnd;
-
-                // Insert 4 spaces
-                this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
-                this.selectionStart = this.selectionEnd = start + 4;
-            }
-        });
-    }
-});
-
+@vite('resources/js/admin/widget-editor.js')
 @vite('resources/js/admin/news-editor.js')
-</script>
 @endsection

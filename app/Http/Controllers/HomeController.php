@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Headline;
 use App\Models\Section;
+use App\Models\Widget;
 
 class HomeController extends Controller
 {
@@ -18,6 +19,11 @@ class HomeController extends Controller
             $headline->subline_text = convertBBToHtml($headline->subline_text);
         }
 
-        return view('layouts.frontend.pages.home', compact('headline'));
+        // Load widgets for the home section
+        $widgets = Widget::where('section_id', Section::where('section_name', 'home')->value('id'))
+            ->ordered()
+            ->get();
+
+        return view('layouts.frontend.pages.home', compact('headline', 'widgets'));
     }
 }
