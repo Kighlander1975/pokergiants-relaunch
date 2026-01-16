@@ -35,7 +35,8 @@
                                     @if($section->headline)
                                     <a href="{{ route('admin.headlines.edit', $section->headline) }}" class="text-blue-600 hover:text-blue-900">Headlines</a>
                                     @endif
-                                    <a href="{{ route('admin.views.' . $section->section_name) }}" class="text-green-600 hover:text-green-900">Widgets</a>
+                                    {{-- <a href="{{ route('admin.views.' . $section->section_name) }}" class="text-green-600 hover:text-green-900">Widgets</a> --}}
+                                    <span class="text-gray-400 text-sm">(Widgets kommen bald)</span>
                                     @if($section->section_name !== 'home')
                                     <form method="POST" action="{{ route('admin.sections.destroy', $section) }}" class="inline">
                                         @csrf
