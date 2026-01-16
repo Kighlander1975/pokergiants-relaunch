@@ -811,7 +811,7 @@ const initPlainEditor = () => {
                     return;
                 }
 
-                bbEditor.insertSnippet(`[icon=${iconName}]`);
+                insertSnippet(`[icon=${iconName}]`);
             });
 
         updateIconPreviewFromInput();
