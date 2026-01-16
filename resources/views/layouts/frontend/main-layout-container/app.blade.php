@@ -9,6 +9,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Pokergiants.de - {{ $pageTitle ?? 'Startseite' }}</title>
     @vite(['resources/css/frontend/app.css', 'resources/js/app.js'])
+    @if(isset($dynamic_css))
+    <style>{!! $dynamic_css !!}</style>
+    @endif
 </head>
 
 <body class="flex flex-col min-h-screen">

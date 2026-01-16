@@ -47,7 +47,7 @@ class Widget extends Model
             }
         } else {
             if ($this->width_percentage) {
-                $classes[] = "card-{$this->width_percentage}";
+                $classes[] = "card-{$this->id}";
             }
         }
 

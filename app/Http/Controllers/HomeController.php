@@ -24,6 +24,14 @@ class HomeController extends Controller
             ->ordered()
             ->get();
 
-        return view('layouts.frontend.pages.home', compact('headline', 'widgets'));
+        // Generate dynamic CSS for widget widths
+        $dynamic_css = '';
+        foreach ($widgets as $widget) {
+            if ($widget->widget_type === 'card' && $widget->width_percentage) {
+                $dynamic_css .= ".card-{$widget->id} { flex: 0 0 {$widget->width_percentage}% !important; max-width: {$widget->width_percentage}% !important; }\n";
+            }
+        }
+
+        return view('layouts.frontend.pages.home', compact('headline', 'widgets', 'dynamic_css'));
     }
 }
