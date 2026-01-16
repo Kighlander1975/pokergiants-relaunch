@@ -51,9 +51,6 @@
                                             <h4 class="text-sm font-medium text-gray-900">
                                                 {{ $widget->internal_name ?: 'Widget #' . $widget->id }}
                                             </h4>
-                                            <h4 class="text-sm font-medium text-gray-900">
-                                                {{ $widget->internal_name ?: 'Widget #' . $widget->id }}
-                                            </h4>
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                                 @if($widget->widget_type === 'one-card') bg-purple-100 text-purple-800
                                                 @else bg-blue-100 text-blue-800 @endif">
