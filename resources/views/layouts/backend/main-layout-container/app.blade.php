@@ -111,25 +111,40 @@
                         </div>
                     </div>
 
-                    {{-- Widgets Dropdown - Temporarily disabled until widget system is implemented --}}
-                    {{-- <div class="sidebar-dropdown">
-                        <button class="sidebar-dropdown-toggle flex items-center px-4 py-3 pl-8 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
-                            <svg class="w-4 h-4 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                            <span class="sidebar-text">Widgets</span>
-                            <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div class="sidebar-dropdown-content hidden pl-8">
-                            @foreach(\App\Models\Section::all() as $section)
-                            <a href="{{ route('admin.views.' . $section->section_name) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 {{ request()->routeIs('admin.views.' . $section->section_name) ? 'bg-gray-700 text-white' : '' }}">
-                                <span class="sidebar-text">{{ ucfirst($section->section_name) }}</span>
-                            </a>
-                            @endforeach
+                <!-- Widgets Dropdown -->
+                <div class="sidebar-dropdown">
+                    <button class="sidebar-dropdown-toggle flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
+                        <svg class="w-5 h-5 mr-3 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <span class="sidebar-text">Widgets</span>
+                        <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="sidebar-dropdown-content hidden pl-4">
+                        <!-- Home Section Widgets -->
+                        <div class="sidebar-dropdown">
+                            <button class="sidebar-dropdown-toggle flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 w-full text-left">
+                                <span class="sidebar-text">Home</span>
+                                <svg class="w-4 h-4 ml-auto sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="sidebar-dropdown-content hidden pl-4">
+                                <a href="{{ route('admin.widgets.create', ['section' => 'home']) }}" class="sidebar-link flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                    <svg class="w-4 h-4 mr-2 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    <span class="sidebar-text">Neues Widget</span>
+                                </a>
+                                {{-- Placeholder for dynamic widget list --}}
+                                <div class="px-4 py-2 text-gray-500 text-sm sidebar-text">
+                                    Widgets werden hier aufgelistet
+                                </div>
+                            </div>
                         </div>
-                    </div> --}}
+                    </div>
                 </div>
 
                 <!-- Add more navigation items here -->
@@ -240,15 +255,14 @@
                 }
             }
 
-            // Widgets dropdown temporarily disabled
-            // const viewsRoutes = JSON.parse(document.body.dataset.viewsRoutes || '[]');
-            // const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.includes('/admin/views/' + route));
-            // if (isViewsRouteActive) {
-            //     const widgetsDropdown = document.querySelectorAll('.sidebar-dropdown-content')[2]; // Assuming third dropdown
-            //     if (widgetsDropdown) {
-            //         widgetsDropdown.classList.remove('hidden');
-            //     }
-            // }
+            const viewsRoutes = JSON.parse(document.body.dataset.viewsRoutes || '[]');
+            const isViewsRouteActive = viewsRoutes.some(route => window.location.pathname.includes('/admin/views/' + route));
+            if (isViewsRouteActive) {
+                const widgetsDropdown = document.querySelectorAll('.sidebar-dropdown-content')[2]; // Assuming third dropdown
+                if (widgetsDropdown) {
+                    widgetsDropdown.classList.remove('hidden');
+                }
+            }
         });
     </script>
     @stack('scripts')
