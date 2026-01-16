@@ -701,7 +701,7 @@ const initPlainEditor = () => {
         toolbar.querySelectorAll("[data-bb-heading]").forEach((btn) => {
             btn.addEventListener("click", () => {
                 const level = btn.getAttribute("data-bb-heading");
-                bbEditor.insertHeading(level);
+                insertSnippet(`[${level}]Text hier... [/${level}]`);
             });
         });
 
