@@ -26,6 +26,13 @@ $bbAlignButtons = [
 ['align' => 'right', 'icon' => 'align-right', 'label' => 'Rechtsbündig'],
 ['align' => 'justify', 'icon' => 'align-justify', 'label' => 'Blocksatz'],
 ];
+
+$bbSuitButtons = [
+['type' => 'club', 'symbol' => '♣', 'label' => 'Kreuz'],
+['type' => 'spade', 'symbol' => '♠', 'label' => 'Pik'],
+['type' => 'heart', 'symbol' => '♥', 'label' => 'Herz'],
+['type' => 'diamond', 'symbol' => '♦', 'label' => 'Karo'],
+];
 @endphp
 
 <form action="{{ $news ? route('admin.news.update', $news) : route('admin.news.store') }}" method="POST" class="space-y-6 bg-white shadow-sm rounded-lg p-6">
@@ -129,6 +136,14 @@ $bbAlignButtons = [
                     <i class="fas fa-link" aria-hidden="true"></i>
                     <span class="sr-only">Link</span>
                 </button>
+            </div>
+            <div class="toolbar-group">
+                @foreach($bbSuitButtons as $suit)
+                <button type="button" class="toolbar-btn suit-btn" data-bb-suit="{{ $suit['type'] }}" aria-label="{{ $suit['label'] }}">
+                    <span class="suit-symbol suit-{{ $suit['type'] }} suit-{{ $suit['type'] === 'heart' || $suit['type'] === 'diamond' ? 'red' : 'black' }}">{{ $suit['symbol'] }}</span>
+                    <span class="sr-only">{{ $suit['label'] }}</span>
+                </button>
+                @endforeach
             </div>
             <div class="toolbar-group icon-picker-group">
                 <input type="hidden" id="news-icon-value" name="news_icon_selection" value="{{ old('news_icon_selection', '') }}">

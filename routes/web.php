@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Support\AvatarTempCleanup;
 use App\Http\Controllers\NewsPublicController;
 
-Route::get('/', function () {
-    return view('layouts.frontend.pages.home');
-})->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/about', function () {
     return view('layouts.frontend.pages.about');
@@ -95,8 +93,6 @@ Route::middleware(['auth', 'verified', 'check.role:admin,floorman', 'track.user.
 
     Route::get('/views', [App\Http\Controllers\Admin\ViewController::class, 'index'])->name('views.index');
     Route::get('/views/home', [App\Http\Controllers\Admin\ViewController::class, 'home'])->name('views.home');
-    Route::get('/views/news', [App\Http\Controllers\Admin\ViewController::class, 'news'])->name('views.news');
-    Route::get('/views/tournaments', [App\Http\Controllers\Admin\ViewController::class, 'tournaments'])->name('views.tournaments');
 
     Route::resource('headlines', App\Http\Controllers\Admin\HeadlineController::class);
     Route::resource('sections', App\Http\Controllers\Admin\SectionController::class);

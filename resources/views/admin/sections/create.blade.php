@@ -12,7 +12,7 @@
             <div class="p-6 space-y-6">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-900">Section erstellen</h3>
-                    <a href="{{ route('admin.sections.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Zurück zur Liste</a>
+                    <a href="{{ route('admin.views.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Zurück zur Liste</a>
                 </div>
 
                 <form method="POST" action="{{ route('admin.sections.store') }}" class="space-y-6">
@@ -25,7 +25,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-3">
-                        <a href="{{ route('admin.sections.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">Abbrechen</a>
+                        <a href="{{ route('admin.views.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">Abbrechen</a>
                         <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Erstellen</button>
                     </div>
                 </form>

@@ -44,14 +44,41 @@ export const convertBBToPreviewHtml = (raw) => {
             /\[icon=([^\]]+)\]/gi,
             '<i class="fas fa-$1" aria-hidden="true"></i>'
         )
+        .replace(/\[suit=([^\]]+)\]/gi, (match, type) => {
+            const symbols = {
+                club: "♣",
+                spade: "♠",
+                heart: "♥",
+                diamond: "♦",
+            };
+            const symbol = symbols[type] || "";
+            const color = ["heart", "diamond"].includes(type) ? "red" : "black";
+            return `<span class="suit suit-${type} suit-${color}">${symbol}</span>`;
+        })
         .replace(/\n/g, "<br>");
 
     return html.trim() || '<span class="text-gray-500">(kein Inhalt)</span>';
 };
 
+export const getAvailableTags = () => [
+    "b",
+    "i",
+    "u",
+    "p",
+    "hr",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "align",
+    "url",
+    "icon",
+    "suit",
+];
+
 export const validateBBCode = (content) => {
     const stack = [];
-    const selfClosing = new Set(["hr", "icon"]);
+    const selfClosing = new Set(["hr", "icon", "suit"]);
     const regex = /\[(\/?)([a-z0-9-]+)(?:=[^\]]+)?\]/gi;
     let match;
 

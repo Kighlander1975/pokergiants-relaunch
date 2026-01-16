@@ -16,6 +16,9 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
+// Import admin modules
+import "./admin/headline-editor";
+
 // Wrap .one-card elements in a separate container to force new line
 document.addEventListener("DOMContentLoaded", function () {
     const oneCards = document.querySelectorAll(".one-card");

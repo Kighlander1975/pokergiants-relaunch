@@ -1,4 +1,5 @@
 import { convertBBToPreviewHtml, validateBBCode } from "../shared/bbParser";
+import BBEditor from "../shared/bbEditor";
 
 const safeParseJson = (value) => {
     if (!value) {
@@ -17,6 +18,14 @@ const initNewsEditor = () => {
     if (!editor) {
         return;
     }
+
+    // Initialize BBEditor with toolbar disabled since we have custom toolbar
+    const bbEditor = new BBEditor(editor, {
+        mode: "full",
+        enableToolbar: false,
+        enableCounter: false, // We have custom counter
+        enablePreview: false, // We have custom preview
+    });
 
     const counter = document.getElementById("news-content-count");
     const warningEl = document.getElementById("news-bb-warning");
@@ -436,6 +445,13 @@ const initNewsEditor = () => {
         button.addEventListener("click", () => {
             const direction = button.dataset.bbAlign;
             insertSnippet(`[align=${direction}]Text hier...[/align]`);
+        });
+    });
+
+    document.querySelectorAll("[data-bb-suit]").forEach((button) => {
+        button.addEventListener("click", () => {
+            const type = button.dataset.bbSuit;
+            insertSnippet(`[suit=${type}]`);
         });
     });
 

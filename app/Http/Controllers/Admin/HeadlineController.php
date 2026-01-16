@@ -38,7 +38,7 @@ class HeadlineController extends Controller
 
         Headline::create($data);
 
-        return redirect()->route('admin.headlines.index')->with('success', 'Headline erstellt.');
+        return redirect()->route('admin.views.index')->with('success', 'Headline erstellt.');
     }
 
     /**
@@ -69,7 +69,7 @@ class HeadlineController extends Controller
 
         $headline->update($data);
 
-        return redirect()->route('admin.headlines.index')->with('success', 'Headline aktualisiert.');
+        return redirect()->route('admin.views.index')->with('success', 'Headline aktualisiert.');
     }
 
     /**
@@ -79,6 +79,6 @@ class HeadlineController extends Controller
     {
         $headline->delete();
 
-        return redirect()->route('admin.headlines.index')->with('success', 'Headline gelöscht.');
+        return redirect()->route('admin.views.index')->with('success', 'Headline gelöscht.');
     }
 }

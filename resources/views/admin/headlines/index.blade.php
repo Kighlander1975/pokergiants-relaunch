@@ -12,7 +12,6 @@
             <div class="p-6 space-y-6">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-900">Headlines</h3>
-                    <a href="{{ route('admin.headlines.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Neue Headline</a>
                 </div>
 
                 <div class="overflow-x-auto">

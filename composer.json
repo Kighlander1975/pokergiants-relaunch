@@ -34,7 +34,8 @@
         "files": [
             "app/Helpers/FlagHelper.php",
             "app/Helpers/FlagListHelper.php",
-            "app/Helpers/IconHelper.php"
+            "app/Helpers/IconHelper.php",
+            "app/Helpers/BBCodeHelper.php"
         ]
     },
     "autoload-dev": {
